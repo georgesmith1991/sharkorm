@@ -31,7 +31,7 @@
 
 /* components of SharkORM, developers only need import this header file */
 
-@class SRKObject;
+@class SRKEntity;
 @class SRKRelationship;
 @class SRKEvent;
 @class SRKEventHandler;
@@ -40,6 +40,8 @@
 @class SRKTransaction;
 @class SRKRawResults;
 @class SRKIndexProperty;
+@class SRKObject;
+@class SRKStringObject;
 
 typedef void(^SRKTransactionBlockBlock)(void);
 
@@ -169,7 +171,7 @@ typedef enum : int {
  * SharkORM class, always accessed through class methods, there is only ever a single instance of the database engine.
  */
 
-typedef void(^SRKGlobalEventCallback)(SRKObject* entity);
+typedef void(^SRKGlobalEventCallback)(SRKEntity* entity);
 
 @interface SharkORM : NSObject {
     
@@ -193,7 +195,7 @@ typedef void(^SRKGlobalEventCallback)(SRKObject* entity);
  * Migrates data from an existing CoreData database file into SharkORM, only the supplied object names are converted.  NOTE: If successful, the original file will be removed by the routine.  Existing Objects within the supplied list will be cleared from the database.
  *
  * @param filePath The full path to the CoreData file that needs to be converted.
- * @param tablesToConvert Array of SRKObject class names to convert from the original CoreData file provided.
+ * @param tablesToConvert Array of SRKEntity class names to convert from the original CoreData file provided.
  * @return void
  */
 +(void)migrateFromLegacyCoredataFile:(NSString*)filePath tables:(NSArray*)tablesToConvert;
@@ -313,9 +315,9 @@ enum SRKIndexSortOrder {
 
 @required
 /**
- * If implemented, SharkORM knows that this class is only a partial implementation of an existing SRKObject derrived class.  These objects can be retrieved, but will remain sterile and cannot be commited back into the original table.
+ * If implemented, SharkORM knows that this class is only a partial implementation of an existing SRKEntity derrived class.  These objects can be retrieved, but will remain sterile and cannot be commited back into the original table.
  *
- * @return (Class) The original SRKObject derrived class definition on which this object is partially based.
+ * @return (Class) The original SRKEntity derrived class definition on which this object is partially based.
  */
 + (Class)classIsPartialImplementationOfClass;
 
@@ -330,13 +332,13 @@ enum SharkORMEvent {
 typedef void(^SRKEventRegistrationBlock)(SRKEvent* event);
 
 /**
- * If implemented, SRKEventDelegate is used to notify an object that an event has been raised within a SRKObject.
+ * If implemented, SRKEventDelegate is used to notify an object that an event has been raised within a SRKEntity.
  */
 @protocol SRKEventDelegate <NSObject>
 
 @required
 /**
- * Called when a SRKObject class raises an INSERT, UPDATE or DELETE trigger.  This will only get called after the successful completion of the transaction within the database engine.
+ * Called when a SRKEntity class raises an INSERT, UPDATE or DELETE trigger.  This will only get called after the successful completion of the transaction within the database engine.
  *
  * @param (SRKEvent*)e The event object that was created from the SharkORM event model.
  * @return void
@@ -365,28 +367,28 @@ typedef void(^SRKEventRegistrationBlock)(SRKEvent* event);
  *      SRKContext
  */
 
-typedef     void(^contextExecutionBlock)();
+typedef     void(^contextExecutionBlock)(void);
 
 /**
  * SRKContext objects are used to effect bulk operations across single or multiple tables.  You can not call commit on an object that has been added to a context.  Instead you call commit on the context itself, all activities will then be performed within an single transaction. NOTE: all SRKObjects have their own context already, and any activity performed on then is guaranteed to complete in an ATOMIC way.  This style of object management is provided in a legacy manner as this is a method that programmers are largely used to, but it is not a requirement.  SharkORM already groups together operations and performs them in bulk when it can to improve performance, the deleoper does not need to think about this when writing their application.
  */
 @interface SRKContext : NSObject
 /**
- * Adds an SRKObject to a context.
+ * Adds an SRKEntity to a context.
 
  *
- * @param (SRKObject*)entity The entity to add to the context.
+ * @param (SRKEntity*)entity The entity to add to the context.
  * @return void
  */
-- (void)addEntityToContext:(SRKObject*)entity;
+- (void)addEntityToContext:(SRKEntity*)entity;
 /**
- * Removes an SRKObject from a context.
+ * Removes an SRKEntity from a context.
 
  *
- * @param (SRKObject*)entity The entity to be removed from the context.
+ * @param (SRKEntity*)entity The entity to be removed from the context.
  * @return void
  */
-- (void)removeEntityFromContext:(SRKObject*)entity;
+- (void)removeEntityFromContext:(SRKEntity*)entity;
 /**
  * Used to test if an object is already a member of this context.
 
@@ -394,7 +396,7 @@ typedef     void(^contextExecutionBlock)();
  * @param (SRKObject*)entity The entity to be tested for its presence.
  * @return BOOL returns YES if this object exists in this context.
  */
-- (BOOL)isEntityInContext:(SRKObject*)entity;
+- (BOOL)isEntityInContext:(SRKEntity*)entity;
 /**
  * Commits all of the pending changes contained in SRKObject's within the context.
 
@@ -411,7 +413,7 @@ typedef     void(^contextExecutionBlock)();
  */
 
 /// a generic block to be executed after a commit/remove event.
-typedef void(^SRKCommitOptionsBlock)();
+typedef void(^SRKCommitOptionsBlock)(void);
 
 
 /**
@@ -445,7 +447,8 @@ typedef void(^SRKCommitOptionsBlock)();
  * Specifies a persistable class within SharkORM, any properties that are created within a class that is derrived from SRKObject will need to be implemnted using dynamic properties and not synthesized ones.  SharkORM places its own get/set methods to ensure that all values are correct for the storage and column type.
 
  */
-@interface SRKObject : NSObject <NSCopying>
+
+@interface SRKEntity : NSObject <NSCopying>
 
 /// Creates a SRKQuery object for this class
 + (SRKQuery*)query;
@@ -458,7 +461,10 @@ typedef void(^SRKCommitOptionsBlock)();
 + (SRKEventHandler*)eventHandler;
 
 /// The primary key column, this is common and mandatory across all persistable classes.
-@property (nonatomic, strong)   NSNumber* Id;
+/*
+ *  The primary key is overridden in the SRKObject (Number PK),SRKStringObject (uuid/string pk) and SRKSyncObject just puls from SRKStringObject
+ */
+// @property (nonatomic, strong)   NSNumber* Id; /* Removed */
 
 /// Joined data, if set this contains the results of the query from adjoining tables
 @property (nonatomic, strong, readonly)   NSDictionary* joinedResults;
@@ -657,6 +663,13 @@ typedef void(^SRKCommitOptionsBlock)();
 
 @end
 
+@interface SRKObject : SRKEntity <NSCopying>
+
+/// The primary key column, this is common and mandatory across all persistable classes.
+@property (nonatomic, strong)   NSNumber* Id;
+
+@end
+
 /**
  * Every SRKObject class or instance contains an SRKEventHandler, which the developer can use to monitor activity within the object or class of objects.
 
@@ -696,14 +709,13 @@ typedef void(^SRKCommitOptionsBlock)();
  * Specifies a persistable class within SharkORM, any properties that are created within a class that is derrived from SRKObject will need to be implemnted using dynamic properties and not synthesized ones.  SharkORM places its own get/set methods to ensure that all values are correct for the storage and column type.
  
  */
-@interface SRKStringObject : SRKObject <NSCopying>
+@interface SRKStringObject : SRKEntity <NSCopying>
 
 //NOTE:  There is no way around this, for convenience for the developer to 'know' the type.  The base class inspects the value to check its class, but this is bad OO practice that leads to convenient and nice API for the developer so suck it up, it is NOT dangerous as the public facing API is strongly typed and safe, and well anticipated by the backstore.
 
 /// The primary key column, this is common and mandatory across all persistable classes.  In this case it is forced to NSString* to allow string primary keys in Swift.
 
 @property (nonatomic, strong)   NSString* Id;
-#pragma clang diagnostic pop
 
 @end
 
@@ -717,7 +729,7 @@ typedef void(^SRKCommitOptionsBlock)();
 /// The type of event that triggered the creation of this object
 @property  enum SharkORMEvent               event;
 /// The persistable object that created this event
-@property  (nonatomic, weak) SRKObject*      entity;
+@property  (nonatomic, weak) SRKEntity*      entity;
 /// The properties that have changed within this object since its last comital into the database.
 @property  (nonatomic, strong) NSArray*     changedProperties;
 

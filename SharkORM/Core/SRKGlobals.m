@@ -24,8 +24,6 @@
 #import "SharkORM.h"
 #import "Sqlite3.h"
 
-static SRKGlobals* this;
-
 @interface SRKGlobals ()
 
 @property void** handles;
@@ -47,7 +45,10 @@ static SRKGlobals* this;
 @implementation SRKGlobals
 
 + (instancetype)sharedObject {
-    if (!this) {
+    
+    static SRKGlobals* this = nil;
+    
+    if (this == nil) {
         this = [SRKGlobals new];
     }
     return this;

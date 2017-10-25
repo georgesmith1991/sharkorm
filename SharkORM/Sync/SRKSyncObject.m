@@ -26,8 +26,8 @@
 #import "SRKSyncOptions.h"
 #import "SharkORM+Private.h"
 #import "SharkSync+Private.h"
-#import "SRKObject+Private.h"
-#import "SRKObjectChain.h"
+#import "SRKEntity+Private.h"
+#import "SRKEntityChain.h"
 
 @interface SRKSyncObject ()
 
@@ -80,7 +80,7 @@
     
 }
 
-- (BOOL)__commitRawWithObjectChain:(SRKObjectChain *)chain {
+- (BOOL)__commitRawWithObjectChain:(SRKEntityChain *)chain {
     
     // hash this group
     NSString* group = [SharkSync getEffectiveRecordGroup];
@@ -184,9 +184,9 @@
     
 }
 
-- (BOOL)__commitRawWithObjectChainNoSync:(SRKObjectChain *)chain {
+- (BOOL)__commitRawWithObjectChainNoSync:(SRKEntityChain *)chain {
     
-    return [super __commitRawWithObjectChain:[SRKObjectChain new]];
+    return [super __commitRawWithObjectChain:[SRKEntityChain new]];
     
 }
 

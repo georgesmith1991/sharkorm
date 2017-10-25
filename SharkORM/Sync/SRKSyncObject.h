@@ -24,9 +24,7 @@
 
 #import "SharkORM.h"
 
-@interface SRKSyncObject : SRKObject
-
-@property NSString* Id;
+@interface SRKSyncObject : SRKStringObject
 
 - (BOOL)commitInGroup:(NSString*)group;
 

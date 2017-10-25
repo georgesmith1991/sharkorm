@@ -24,7 +24,7 @@
 
 #include "sqlite3.h"
 #import "SRKDefinitions.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SRKRegistry.h"
 #import "SRKEventBlockHolder.h"
 #import "SRKQuery+Private.h"
@@ -49,7 +49,7 @@ NSString* makeLikeParameter(NSString* stmt) {
     
 }
 
-typedef void (^SRKBasicBlock)();
+typedef void (^SRKBasicBlock)(void);
 typedef void(^SQLQueryRowBlock)(sqlite3_stmt* statement, NSMutableArray* resultsSet);
 
 typedef enum : int {
@@ -143,7 +143,7 @@ typedef enum : int {
                         
                         @autoreleasepool {
                             /* create a new SRKObject based on this class */
-                            SRKObject* newRecord = [NSClassFromString(currentTableName) new];
+                            SRKEntity* newRecord = [NSClassFromString(currentTableName) new];
                             if (newRecord) {
                                 for (NSString* currentField in newRecord.fieldNames) {
                                     
@@ -274,7 +274,7 @@ typedef enum : int {
 +(NSString *)databaseNameForClass:(Class)classDecl {
     
     NSString* dbName = nil;
-    if ([classDecl isSubclassOfClass:[SRKObject class]]) {
+    if ([classDecl isSubclassOfClass:[SRKEntity class]]) {
         dbName = [classDecl storageDatabaseForClass];
     }
     
@@ -1224,7 +1224,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 
 #pragma mark - object entity support
 
--(BOOL)commitObject:(SRKObject *)entity {
+-(BOOL)commitObject:(SRKEntity *)entity {
     
     BOOL        succeded = NO;
     
@@ -1434,7 +1434,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
 }
 
--(BOOL)removeObject:(SRKObject *)entity {
+-(BOOL)removeObject:(SRKEntity *)entity {
     
     __block BOOL    succeded = NO;
     NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
@@ -1473,7 +1473,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         
         if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
             
-            [[SRKUtilities new] bindParameters:@[entity.Id] toStatement:statement];
+            [[SRKUtilities new] bindParameters:@[entity.reflectedPrimaryKeyValue] toStatement:statement];
             
             int result = sqlite3_step(statement);
             
@@ -1524,7 +1524,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     if (succeded) {
         /* check to see if this object is a fts object and clear the existing row */
         if ([[entity class] FTSParametersForEntity]) {
-            [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.Id] inDatabase:nil];
+            [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.reflectedPrimaryKeyValue] inDatabase:nil];
         }
         
         // if we are not within a transaction then execute any supplied blocks within the commit object
@@ -1538,7 +1538,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
 }
 
--(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey {
+-(void)replaceUUIDPrimaryKey:(SRKEntity *)entity withNewUUIDKey:(NSString*)newPrimaryKey {
     
     __block BOOL    succeded = NO;
     NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
@@ -1577,7 +1577,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         
         if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
             
-            [[SRKUtilities new] bindParameters:@[newPrimaryKey,entity.Id] toStatement:statement];
+            [[SRKUtilities new] bindParameters:@[newPrimaryKey,entity.reflectedPrimaryKeyValue] toStatement:statement];
             
             int result = sqlite3_step(statement);
             
@@ -1631,7 +1631,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         
         /* check to see if this object is a fts object and clear the existing row */
         if ([[entity class] FTSParametersForEntity]) {
-            [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.Id] inDatabase:nil];
+            [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.reflectedPrimaryKeyValue] inDatabase:nil];
         }
         
     }
@@ -1640,9 +1640,9 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
 }
 
-+(void)refreshObject:(SRKObject *)entity {
++(void)refreshObject:(SRKEntity *)entity {
     
-    SRKObject* entNew = [[entity.class alloc] initWithPrimaryKeyValue:[entity Id]];
+    SRKEntity* entNew = [[entity.class alloc] initWithPrimaryKeyValue:entity.reflectedPrimaryKeyValue];
     
     if (entNew) {
         NSArray* fldNames = [entity fieldNames];
@@ -1803,12 +1803,13 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
     }
     
+    SRKError* e = [SRKError new];
+    e.sqlQuery = sql;
+    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(db)];
+    
     /* error in prepare statement */
     if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] conformsToProtocol:@protocol(SRKDelegate)] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
-        
-        SRKError* e = [SRKError new];
-        e.sqlQuery = sql;
-        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(db)];
+
         [[[SRKGlobals sharedObject] delegate] databaseError:e];
         
     }
@@ -2087,7 +2088,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             
         }
         
-        SRKObject* object = [query.classDecl new];
+        SRKEntity* object = [query.classDecl new];
         
         for (NSString* fieldName in record.allKeys) {
             [object setField:fieldName value:[record valueForKey:fieldName]];

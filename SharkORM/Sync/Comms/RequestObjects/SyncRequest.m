@@ -24,7 +24,7 @@
 #import "SRKSyncChange.h"
 #import "SRKSyncGroup.h"
 #import "SRKSyncOptions.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SharkORM+Private.h"
 #import "SRKDefunctObject.h"
 #import "SharkSync+Private.h"
@@ -33,7 +33,7 @@
 @interface SRKSyncObject ()
 
 -(BOOL)__removeRawNoSync;
--(BOOL)__commitRawWithObjectChainNoSync:(SRKObjectChain *)chain;
+-(BOOL)__commitRawWithObjectChainNoSync:(SRKEntityChain *)chain;
 
 @end
 

@@ -124,7 +124,7 @@
 				
 				/* now we check-in the results into the dictionary, ready to be retuned to the call */
 				NSUInteger position = index;
-				for (SRKObject* o in results) {
+				for (SRKEntity* o in results) {
 					[_dictionaryStore setObject:o forKey:@(position)];
 					position++;
 				}
@@ -154,7 +154,7 @@
     
     [SRKTransaction transaction:^{
         
-        for (SRKObject* o in self) {
+        for (SRKEntity* o in self) {
             @autoreleasepool {
                 [o remove];
             }

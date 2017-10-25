@@ -24,7 +24,7 @@
 
 #import "SharkSync.h"
 #import "SharkORM+Private.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SRKSyncChange.h"
 #import "SRKDefunctObject.h"
 #import "SRKSyncGroup.h"
@@ -229,7 +229,7 @@ typedef NSImage XXImage;
     
 }
 
-+ (void)queueObject:(SRKObject *)object withChanges:(NSMutableDictionary*)changes withOperation:(SharkSyncOperation)operation inHashedGroup:(NSString*)group {
++ (void)queueObject:(SRKSyncObject *)object withChanges:(NSMutableDictionary*)changes withOperation:(SharkSyncOperation)operation inHashedGroup:(NSString*)group {
     
     if (operation == SharkSyncOperationCreate || operation == SharkSyncOperationSet) {
         
@@ -380,11 +380,11 @@ typedef NSImage XXImage;
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
                         
-                    } else if ([value isKindOfClass:[SRKObject class]]) {
+                    } else if ([value isKindOfClass:[SRKEntity class]]) {
                         
                         type = @"entity";
                         
-                        NSData* dValue = [[NSString stringWithFormat:@"%@", ((SRKObject*)value).Id] dataUsingEncoding: NSUnicodeStringEncoding];
+                        NSData* dValue = [[NSString stringWithFormat:@"%@", ((SRKSyncObject*)value).Id] dataUsingEncoding: NSUnicodeStringEncoding];
                         
                         // call the block in the sync settings to encrypt the data
                         SharkSync* sync = [SharkSync sharedObject];

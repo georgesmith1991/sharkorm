@@ -31,7 +31,7 @@
 + (NSString*)generateGUID;
 - (NSString *)originalColumnName:(NSString *)columnName;
 - (NSString *)normalizedColumnName:(NSString *)columnName;
-- (NSString *)propertyNameFromSelector:(SEL)selector forObject:(SRKObject*)object;
+- (NSString *)propertyNameFromSelector:(SEL)selector forObject:(SRKEntity*)object;
 - (id)sqlite3_column_objc:(sqlite3_stmt *)stmt column:(int)i;
 - (SEL)generateSetSelectorForPropertyName:(NSString*)fieldname;
 - (void)bindParameters:(NSArray*)params toStatement:(sqlite3_stmt*)statement;

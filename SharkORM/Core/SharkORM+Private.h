@@ -32,10 +32,10 @@
 @interface SharkORM ()
 
 // form data methods
--(BOOL)removeObject:(SRKObject*)entity;
--(BOOL)commitObject:(SRKObject*)entity;
--(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey;
-+(void)refreshObject:(SRKObject*)entity;
+-(BOOL)removeObject:(SRKEntity*)entity;
+-(BOOL)commitObject:(SRKEntity*)entity;
+-(void)replaceUUIDPrimaryKey:(SRKEntity *)entity withNewUUIDKey:(NSString*)newPrimaryKey;
++(void)refreshObject:(SRKEntity*)entity;
 
 -(NSMutableArray*)fetchEntitySetForQuery:(SRKQuery*)query;
 -(uint64_t)fetchCountForQuery:(SRKQuery*)query;

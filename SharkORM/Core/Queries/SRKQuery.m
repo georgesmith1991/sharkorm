@@ -32,7 +32,7 @@
 #import "SRKUtilities.h"
 #import "SRKJoinObject.h"
 #import "SRKRegistry.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SRKGlobals.h"
 
 @implementation SRKQuery
@@ -564,7 +564,7 @@
 	
 	SRKContext* context = [SRKContext new];
 	NSArray* entitys = [self fetch];
-	for (SRKObject* o in entitys) {
+	for (SRKEntity* o in entitys) {
 		o.context = context;
 		[context addEntityToContext:o];
 	}
@@ -575,7 +575,7 @@
 - (NSArray*)fetchIntoContext:(SRKContext*)context {
 	
 	NSArray* entitys = [self fetch];
-	for (SRKObject* o in entitys) {
+	for (SRKEntity* o in entitys) {
 		o.context = context;
 		[context addEntityToContext:o];
 	}
@@ -589,7 +589,7 @@
 	NSMutableDictionary* resultsSet = [[NSMutableDictionary alloc] init];
 	SRKResultSet* queryResult = [self fetch];
 	
-	for (SRKObject* g in queryResult) {
+	for (SRKEntity* g in queryResult) {
 		
 		NSString* keyValue = (NSString*)[g getField:propertyName];
 		if (keyValue) {
@@ -630,7 +630,7 @@
 
 - (SRKQuery*)entityclass:(Class)entityClass {
 	
-	if ([entityClass isSubclassOfClass:[SRKObject class]]) {
+	if ([entityClass isSubclassOfClass:[SRKEntity class]]) {
 		if ([entityClass conformsToProtocol:@protocol(SRKPartialClassDelegate)]) {
 			
 			Class fullClass = [entityClass classIsPartialImplementationOfClass];

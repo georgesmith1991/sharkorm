@@ -64,7 +64,7 @@ class SwiftTestClass : SRKObject {
 		
 	}
     
-    class func testInitialValues() {
+    @objc class func testInitialValues() {
         
         let p = Person(dictionary: ["Name" : "Adrian Herridge", "age" : 38])
         p?.commit()

@@ -23,12 +23,12 @@
 
 #import <Foundation/Foundation.h>
 
-@class SRKObject;
+@class SRKEntity;
 @class SRKEventHandler;
 
 @interface SRKRegistryEntry : NSObject
 
-@property (weak, nonatomic)    SRKObject*       entity;
+@property (weak, nonatomic)    SRKEntity*       entity;
 @property (strong, nonatomic)  NSString*       sourceTable;
 @property (weak, nonatomic)    SRKEventHandler* tableEventHandler;
 

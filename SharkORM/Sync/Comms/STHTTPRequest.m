@@ -927,7 +927,7 @@ static STHTTPRequestCookiesStorage globalCookiesStoragePolicy = STHTTPRequestCoo
     self.errorBlock(self.error);
 }
 
-+ (void)setBackgroundCompletionHandler:(void(^)())completionHandler forSessionIdentifier:(NSString *)sessionIdentifier {
++ (void)setBackgroundCompletionHandler:(void (^)(void))completionHandler forSessionIdentifier:(NSString *)sessionIdentifier {
     if(sessionCompletionHandlersForIdentifier == nil) {
         sessionCompletionHandlersForIdentifier = [NSMutableDictionary dictionary];
     }
@@ -976,7 +976,7 @@ static STHTTPRequestCookiesStorage globalCookiesStoragePolicy = STHTTPRequestCoo
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        void (^completionHandler)() = sessionCompletionHandlersForIdentifier[session.configuration.identifier];
+        void (^completionHandler)(void) = sessionCompletionHandlersForIdentifier[session.configuration.identifier];
         
         if(completionHandler) {
             completionHandler();

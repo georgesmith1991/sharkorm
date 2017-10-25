@@ -23,7 +23,7 @@
 
 
 #import "SRKUtilities.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SharkORM+Private.h"
 #import "SRKGlobals.h"
 
@@ -112,7 +112,7 @@
                 entityClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:[NSString stringWithUTF8String:tableName]]);
             }
             if (entityClass) {
-                switch ([SRKObject getEntityPropertyType:columnName forClass:entityClass]) {
+                switch ([SRKEntity getEntityPropertyType:columnName forClass:entityClass]) {
                     case SRK_PROPERTY_TYPE_STRING:
                         // do nothing, because value is already a string.
                         break;
@@ -260,18 +260,18 @@
             sqlite3_bind_text16(statement, paramCount, [(NSString*)fmt cStringUsingEncoding:NSUTF16StringEncoding],@([(NSString*)fmt lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
             
             
-        } else if ([p isKindOfClass:[SRKObject class]]) {
+        } else if ([p isKindOfClass:[SRKEntity class]]) {
             
-            id obId = ((SRKObject*)p).Id;
+            NSNumber* obId = ((SRKEntity*)p).reflectedPrimaryKeyValue;
             if ([obId isKindOfClass:[NSNumber class]]) {
                 CFNumberType numberType = CFNumberGetType((CFNumberRef)(NSNumber*)obId);
                 if (numberType == kCFNumberSInt64Type || numberType == kCFNumberLongLongType) {
-                    sqlite3_bind_int64(statement, paramCount, [((SRKObject*)p).Id longLongValue]);
+                    sqlite3_bind_int64(statement, paramCount, [obId longLongValue]);
                 } else {
-                    sqlite3_bind_double(statement, paramCount, [((SRKObject*)p).Id doubleValue]);
+                    sqlite3_bind_double(statement, paramCount, [obId doubleValue]);
                 }
             } else if (([obId isKindOfClass:[NSString class]])) {
-                NSString* sId = obId;
+                NSString* sId = (NSString*)obId;
                 sqlite3_bind_text16(statement, paramCount, [sId cStringUsingEncoding:NSUTF16StringEncoding],@([sId lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
             } else {
                 // no support for null primary keys or looking up deleted or non-existent objects.
@@ -348,7 +348,7 @@
     
 }
 
-- (NSString *)propertyNameFromSelector:(SEL)selector forObject:(SRKObject *)object {
+- (NSString *)propertyNameFromSelector:(SEL)selector forObject:(SRKEntity *)object {
     
     
     //TODO:  compare the selector to the cached schema, then get the property name from there instead.
@@ -405,17 +405,10 @@
         /* handle conversion of NSDate to ANSI STANDARD REVERSE DATE FORMAT YYYY/MM/DD HH:MM:SS */
         if ([a isKindOfClass:[NSDate class]]) {
             
-            if (true) { //[[SharkORM getSettings] useEpochDates]
-                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-                [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                a = [NSString stringWithFormat:@"dateFromString('%@')", [dateFormat stringFromDate:a]];
-                [arguments replaceObjectAtIndex:i withObject:a];
-            } else {
-                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-                [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                a = [NSString stringWithFormat:@"'%@'", [dateFormat stringFromDate:a]];
-                [arguments replaceObjectAtIndex:i withObject:a];
-            }
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+            [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            a = [NSString stringWithFormat:@"dateFromString('%@')", [dateFormat stringFromDate:a]];
+            [arguments replaceObjectAtIndex:i withObject:a];
             
         }
     }

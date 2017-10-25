@@ -33,7 +33,7 @@
 @property BOOL                      originalIsDirty;
 @property id                        originalPk;
 
-- (void)copyObjectValuesIntoRestorePoint:(SRKObject*)object;
-- (void)restoreValuesIntoObject:(SRKObject*)object;
+- (void)copyObjectValuesIntoRestorePoint:(SRKEntity*)object;
+- (void)restoreValuesIntoObject:(SRKEntity*)object;
 
 @end

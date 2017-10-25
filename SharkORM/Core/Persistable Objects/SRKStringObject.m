@@ -23,7 +23,30 @@
 
 
 #import "SharkORM.h"
+#import "SRKEntity+Private.h"
+#import "SRKDefinitions.h"
 
-@implementation SRKStringObject
+@implementation SRKStringObject {
+    id cachedPrimaryKeyValue;
+}
+
+@dynamic Id;
+
+/* Primary Key Support */
+- (id)Id {
+    if (!cachedPrimaryKeyValue) {
+        cachedPrimaryKeyValue = [self getField:SRK_DEFAULT_PRIMARY_KEY_NAME];
+    }
+    return cachedPrimaryKeyValue;
+}
+
+- (void)setId:(id)value {
+    cachedPrimaryKeyValue = value;
+    [self setFieldRaw:SRK_DEFAULT_PRIMARY_KEY_NAME value:value];
+}
+
+- (void)setCachedPrimaryKey:(id)key {
+    cachedPrimaryKeyValue = key;
+}
 
 @end
