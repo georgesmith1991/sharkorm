@@ -7,7 +7,7 @@
 
 import Foundation
 
-class PersonSwift : SRKObject {
+@objc class PersonSwift : SRKObject {
     
     @objc internal dynamic var Name: String?
     @objc internal dynamic var age: NSNumber?
@@ -15,19 +15,19 @@ class PersonSwift : SRKObject {
     
 }
 
-class SmallPersonSwift : PersonSwift {
+@objc class SmallPersonSwift : PersonSwift {
     
     @objc dynamic var height: NSNumber?
     
 }
 
-class DepartmentSwift : SRKObject {
+@objc class DepartmentSwift : SRKObject {
     
     @objc dynamic var name: String?
     
 }
 
-class SwiftTestClass : SRKObject {
+@objc class SwiftTestClass : SRKObject {
 	
     @objc dynamic var SwiftNumber: NSNumber?
 	@objc dynamic var SwiftTestString : String?
@@ -51,7 +51,7 @@ class SwiftTestClass : SRKObject {
 		
 	}
 	
-	class PrivateSwiftClass: SRKObject {
+	@objc class PrivateSwiftClass: SRKObject {
 		
 		@objc dynamic var SwiftTestString : String!
 		@objc dynamic var SwiftTestNumber : NSNumber!

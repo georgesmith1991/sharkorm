@@ -63,7 +63,6 @@
 		E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */; };
 		E07C4F331D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
-		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */; };
 		E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
@@ -217,7 +216,6 @@
 		E07EFCD91E904241006AF533 /* SchemaTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaTests.h; sourceTree = "<group>"; };
 		E07EFCDA1E904241006AF533 /* SchemaTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaTests.m; sourceTree = "<group>"; };
 		E08DF4391E02BAD9003884DE /* SRKTransaction+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SRKTransaction+Private.h"; sourceTree = "<group>"; };
-		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
 		E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKAES256Extension.h; sourceTree = "<group>"; };
@@ -557,7 +555,6 @@
 		E0F413611CF632120085166C /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				E092CB041D0095A300C6C8CD /* DBAccess.h */,
 				E0F413621CF632120085166C /* Events */,
 				E0F4136A1CF632120085166C /* FTS */,
 				E0F4136D1CF632120085166C /* FuzzyStore */,
@@ -718,7 +715,6 @@
 				3A1C0D2E1FA07B300014CBC3 /* SRKSyncOptions.h in Headers */,
 				3A1C0D441FA07B300014CBC3 /* SRKSyncObject.h in Headers */,
 				E0F413D81CF632120085166C /* SharkORM.h in Headers */,
-				E092CB051D00964700C6C8CD /* DBAccess.h in Headers */,
 				E0F413DB1CF632120085166C /* SRKDefinitions.h in Headers */,
 				3A1C0D3F1FA07B300014CBC3 /* SRKSyncChange.h in Headers */,
 				E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */,
@@ -1122,7 +1118,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -1136,7 +1132,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;

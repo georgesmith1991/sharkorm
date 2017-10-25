@@ -1049,7 +1049,8 @@
             p1.department = [Department new];
             p1.department.name = @"D2";
             [p1 commit];
-            SRKResultSet* r = [[[Person query] whereWithFormat:@"aglew = 127" withParameters:nil] fetch];
+            [[[Person query] whereWithFormat:@"aglew = 127" withParameters:nil] fetch];
+            
             first = YES;
             
         } withRollback:^{
