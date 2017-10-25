@@ -7,6 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A1C0D281FA07B300014CBC3 /* SRKSyncOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D091FA07B2E0014CBC3 /* SRKSyncOptions.m */; };
+		3A1C0D291FA07B300014CBC3 /* SRKDeferredChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */; };
+		3A1C0D2A1FA07B300014CBC3 /* SRKDefunctObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0B1FA07B2E0014CBC3 /* SRKDefunctObject.h */; };
+		3A1C0D2B1FA07B300014CBC3 /* SharkSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D0C1FA07B2F0014CBC3 /* SharkSync.m */; };
+		3A1C0D2C1FA07B300014CBC3 /* SharkSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0D1FA07B2F0014CBC3 /* SharkSync.h */; };
+		3A1C0D2D1FA07B300014CBC3 /* SRKSharkSyncAccountSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0E1FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.h */; };
+		3A1C0D2E1FA07B300014CBC3 /* SRKSyncOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0F1FA07B2F0014CBC3 /* SRKSyncOptions.h */; };
+		3A1C0D2F1FA07B300014CBC3 /* SRKSyncRegisteredClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D101FA07B2F0014CBC3 /* SRKSyncRegisteredClass.h */; };
+		3A1C0D301FA07B300014CBC3 /* SRKSyncRegisteredClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D111FA07B2F0014CBC3 /* SRKSyncRegisteredClass.m */; };
+		3A1C0D311FA07B300014CBC3 /* SRKSharkSyncAccountSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D121FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.m */; };
+		3A1C0D321FA07B300014CBC3 /* SRKDeferredChange.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D131FA07B2F0014CBC3 /* SRKDeferredChange.m */; };
+		3A1C0D331FA07B300014CBC3 /* SRKSyncAuthObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D141FA07B2F0014CBC3 /* SRKSyncAuthObject.m */; };
+		3A1C0D341FA07B300014CBC3 /* STHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D161FA07B2F0014CBC3 /* STHTTPRequest.h */; };
+		3A1C0D351FA07B300014CBC3 /* BaseCommsObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D171FA07B2F0014CBC3 /* BaseCommsObject.h */; };
+		3A1C0D361FA07B300014CBC3 /* SyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D191FA07B2F0014CBC3 /* SyncRequest.m */; };
+		3A1C0D371FA07B300014CBC3 /* SyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D1A1FA07B2F0014CBC3 /* SyncRequest.h */; };
+		3A1C0D381FA07B300014CBC3 /* SRKSyncNodesList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D1B1FA07B2F0014CBC3 /* SRKSyncNodesList.m */; };
+		3A1C0D391FA07B300014CBC3 /* STHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D1C1FA07B2F0014CBC3 /* STHTTPRequest.m */; };
+		3A1C0D3A1FA07B300014CBC3 /* BaseCommsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D1D1FA07B2F0014CBC3 /* BaseCommsObject.m */; };
+		3A1C0D3B1FA07B300014CBC3 /* SRKSyncNodesList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D1E1FA07B2F0014CBC3 /* SRKSyncNodesList.h */; };
+		3A1C0D3C1FA07B300014CBC3 /* SRKSyncGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D1F1FA07B2F0014CBC3 /* SRKSyncGroup.m */; };
+		3A1C0D3D1FA07B300014CBC3 /* SRKSyncAuthObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D201FA07B2F0014CBC3 /* SRKSyncAuthObject.h */; };
+		3A1C0D3E1FA07B300014CBC3 /* SharkSync+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */; };
+		3A1C0D3F1FA07B300014CBC3 /* SRKSyncChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D221FA07B2F0014CBC3 /* SRKSyncChange.h */; };
+		3A1C0D401FA07B300014CBC3 /* SRKSyncChange.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D231FA07B2F0014CBC3 /* SRKSyncChange.m */; };
+		3A1C0D411FA07B300014CBC3 /* SRKSyncObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D241FA07B2F0014CBC3 /* SRKSyncObject.m */; };
+		3A1C0D421FA07B300014CBC3 /* SRKSyncGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D251FA07B300014CBC3 /* SRKSyncGroup.h */; };
+		3A1C0D431FA07B300014CBC3 /* SRKDefunctObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */; };
+		3A1C0D441FA07B300014CBC3 /* SRKSyncObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D271FA07B300014CBC3 /* SRKSyncObject.h */; };
 		3A330F621D25461500483626 /* SRKObjectChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A330F601D25461500483626 /* SRKObjectChain.h */; };
 		3A330F631D25461500483626 /* SRKObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A330F611D25461500483626 /* SRKObjectChain.m */; };
 		3A330F641D25461500483626 /* SRKObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A330F611D25461500483626 /* SRKObjectChain.m */; };
@@ -149,6 +178,35 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3A1C0D091FA07B2E0014CBC3 /* SRKSyncOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncOptions.m; sourceTree = "<group>"; };
+		3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKDeferredChange.h; sourceTree = "<group>"; };
+		3A1C0D0B1FA07B2E0014CBC3 /* SRKDefunctObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKDefunctObject.h; sourceTree = "<group>"; };
+		3A1C0D0C1FA07B2F0014CBC3 /* SharkSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharkSync.m; sourceTree = "<group>"; };
+		3A1C0D0D1FA07B2F0014CBC3 /* SharkSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharkSync.h; sourceTree = "<group>"; };
+		3A1C0D0E1FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSharkSyncAccountSettings.h; sourceTree = "<group>"; };
+		3A1C0D0F1FA07B2F0014CBC3 /* SRKSyncOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncOptions.h; sourceTree = "<group>"; };
+		3A1C0D101FA07B2F0014CBC3 /* SRKSyncRegisteredClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncRegisteredClass.h; sourceTree = "<group>"; };
+		3A1C0D111FA07B2F0014CBC3 /* SRKSyncRegisteredClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncRegisteredClass.m; sourceTree = "<group>"; };
+		3A1C0D121FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSharkSyncAccountSettings.m; sourceTree = "<group>"; };
+		3A1C0D131FA07B2F0014CBC3 /* SRKDeferredChange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKDeferredChange.m; sourceTree = "<group>"; };
+		3A1C0D141FA07B2F0014CBC3 /* SRKSyncAuthObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncAuthObject.m; sourceTree = "<group>"; };
+		3A1C0D161FA07B2F0014CBC3 /* STHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STHTTPRequest.h; sourceTree = "<group>"; };
+		3A1C0D171FA07B2F0014CBC3 /* BaseCommsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCommsObject.h; sourceTree = "<group>"; };
+		3A1C0D191FA07B2F0014CBC3 /* SyncRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncRequest.m; sourceTree = "<group>"; };
+		3A1C0D1A1FA07B2F0014CBC3 /* SyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncRequest.h; sourceTree = "<group>"; };
+		3A1C0D1B1FA07B2F0014CBC3 /* SRKSyncNodesList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncNodesList.m; sourceTree = "<group>"; };
+		3A1C0D1C1FA07B2F0014CBC3 /* STHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STHTTPRequest.m; sourceTree = "<group>"; };
+		3A1C0D1D1FA07B2F0014CBC3 /* BaseCommsObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseCommsObject.m; sourceTree = "<group>"; };
+		3A1C0D1E1FA07B2F0014CBC3 /* SRKSyncNodesList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncNodesList.h; sourceTree = "<group>"; };
+		3A1C0D1F1FA07B2F0014CBC3 /* SRKSyncGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncGroup.m; sourceTree = "<group>"; };
+		3A1C0D201FA07B2F0014CBC3 /* SRKSyncAuthObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncAuthObject.h; sourceTree = "<group>"; };
+		3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SharkSync+Private.h"; sourceTree = "<group>"; };
+		3A1C0D221FA07B2F0014CBC3 /* SRKSyncChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncChange.h; sourceTree = "<group>"; };
+		3A1C0D231FA07B2F0014CBC3 /* SRKSyncChange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncChange.m; sourceTree = "<group>"; };
+		3A1C0D241FA07B2F0014CBC3 /* SRKSyncObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncObject.m; sourceTree = "<group>"; };
+		3A1C0D251FA07B300014CBC3 /* SRKSyncGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncGroup.h; sourceTree = "<group>"; };
+		3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKDefunctObject.m; sourceTree = "<group>"; };
+		3A1C0D271FA07B300014CBC3 /* SRKSyncObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKSyncObject.h; sourceTree = "<group>"; };
 		3A330F601D25461500483626 /* SRKObjectChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKObjectChain.h; sourceTree = "<group>"; };
 		3A330F611D25461500483626 /* SRKObjectChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKObjectChain.m; sourceTree = "<group>"; };
 		3A44877C1D1E857B00BD9CB5 /* OtherTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherTests.h; sourceTree = "<group>"; };
@@ -290,6 +348,58 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3A1C0D081FA07AE20014CBC3 /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				3A1C0D151FA07B2F0014CBC3 /* Comms */,
+				3A1C0D0D1FA07B2F0014CBC3 /* SharkSync.h */,
+				3A1C0D0C1FA07B2F0014CBC3 /* SharkSync.m */,
+				3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */,
+				3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */,
+				3A1C0D131FA07B2F0014CBC3 /* SRKDeferredChange.m */,
+				3A1C0D0B1FA07B2E0014CBC3 /* SRKDefunctObject.h */,
+				3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */,
+				3A1C0D0E1FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.h */,
+				3A1C0D121FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.m */,
+				3A1C0D201FA07B2F0014CBC3 /* SRKSyncAuthObject.h */,
+				3A1C0D141FA07B2F0014CBC3 /* SRKSyncAuthObject.m */,
+				3A1C0D221FA07B2F0014CBC3 /* SRKSyncChange.h */,
+				3A1C0D231FA07B2F0014CBC3 /* SRKSyncChange.m */,
+				3A1C0D251FA07B300014CBC3 /* SRKSyncGroup.h */,
+				3A1C0D1F1FA07B2F0014CBC3 /* SRKSyncGroup.m */,
+				3A1C0D271FA07B300014CBC3 /* SRKSyncObject.h */,
+				3A1C0D241FA07B2F0014CBC3 /* SRKSyncObject.m */,
+				3A1C0D0F1FA07B2F0014CBC3 /* SRKSyncOptions.h */,
+				3A1C0D091FA07B2E0014CBC3 /* SRKSyncOptions.m */,
+				3A1C0D101FA07B2F0014CBC3 /* SRKSyncRegisteredClass.h */,
+				3A1C0D111FA07B2F0014CBC3 /* SRKSyncRegisteredClass.m */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		3A1C0D151FA07B2F0014CBC3 /* Comms */ = {
+			isa = PBXGroup;
+			children = (
+				3A1C0D161FA07B2F0014CBC3 /* STHTTPRequest.h */,
+				3A1C0D171FA07B2F0014CBC3 /* BaseCommsObject.h */,
+				3A1C0D181FA07B2F0014CBC3 /* RequestObjects */,
+				3A1C0D1B1FA07B2F0014CBC3 /* SRKSyncNodesList.m */,
+				3A1C0D1C1FA07B2F0014CBC3 /* STHTTPRequest.m */,
+				3A1C0D1D1FA07B2F0014CBC3 /* BaseCommsObject.m */,
+				3A1C0D1E1FA07B2F0014CBC3 /* SRKSyncNodesList.h */,
+			);
+			path = Comms;
+			sourceTree = "<group>";
+		};
+		3A1C0D181FA07B2F0014CBC3 /* RequestObjects */ = {
+			isa = PBXGroup;
+			children = (
+				3A1C0D191FA07B2F0014CBC3 /* SyncRequest.m */,
+				3A1C0D1A1FA07B2F0014CBC3 /* SyncRequest.h */,
+			);
+			path = RequestObjects;
+			sourceTree = "<group>";
+		};
 		3A44877B1D1E856400BD9CB5 /* Other Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -445,6 +555,7 @@
 			children = (
 				E0F413611CF632120085166C /* Core */,
 				E0F413A01CF632120085166C /* SQLite */,
+				3A1C0D081FA07AE20014CBC3 /* Sync */,
 				E0F4134C1CF6312A0085166C /* Info.plist */,
 			);
 			path = SharkORM;
@@ -631,11 +742,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A1C0D291FA07B300014CBC3 /* SRKDeferredChange.h in Headers */,
 				E02AC1B91E07EF2500E47406 /* SRKTransactionInfo.h in Headers */,
+				3A1C0D2F1FA07B300014CBC3 /* SRKSyncRegisteredClass.h in Headers */,
 				3A330F621D25461500483626 /* SRKObjectChain.h in Headers */,
+				3A1C0D2E1FA07B300014CBC3 /* SRKSyncOptions.h in Headers */,
+				3A1C0D441FA07B300014CBC3 /* SRKSyncObject.h in Headers */,
 				E0F413D81CF632120085166C /* SharkORM.h in Headers */,
 				E092CB051D00964700C6C8CD /* DBAccess.h in Headers */,
 				E0F413DB1CF632120085166C /* SRKDefinitions.h in Headers */,
+				3A1C0D3F1FA07B300014CBC3 /* SRKSyncChange.h in Headers */,
 				E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */,
 				E0F413B21CF632120085166C /* SRKFuzzyStore.h in Headers */,
 				E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */,
@@ -645,10 +761,19 @@
 				E0F413D11CF632120085166C /* SRKRegistry.h in Headers */,
 				E0F413E11CF632120085166C /* SRKRelationship.h in Headers */,
 				E0F413E91CF632120085166C /* SRKUtilities.h in Headers */,
+				3A1C0D371FA07B300014CBC3 /* SyncRequest.h in Headers */,
 				E0F413D41CF632120085166C /* SRKRegistryEntry.h in Headers */,
 				E0F413CC1CF632120085166C /* SRKQueryAsyncHandler+Private.h in Headers */,
+				3A1C0D341FA07B300014CBC3 /* STHTTPRequest.h in Headers */,
+				3A1C0D3E1FA07B300014CBC3 /* SharkSync+Private.h in Headers */,
+				3A1C0D3D1FA07B300014CBC3 /* SRKSyncAuthObject.h in Headers */,
+				3A1C0D3B1FA07B300014CBC3 /* SRKSyncNodesList.h in Headers */,
+				3A1C0D351FA07B300014CBC3 /* BaseCommsObject.h in Headers */,
+				3A1C0D421FA07B300014CBC3 /* SRKSyncGroup.h in Headers */,
+				3A1C0D2D1FA07B300014CBC3 /* SRKSharkSyncAccountSettings.h in Headers */,
 				E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */,
 				E0F413AF1CF632120085166C /* FTSRegistry.h in Headers */,
+				3A1C0D2A1FA07B300014CBC3 /* SRKDefunctObject.h in Headers */,
 				E0F413BE1CF632120085166C /* SRKResultSet+Private.h in Headers */,
 				E0F413E61CF632120085166C /* SRKSQLiteHandle.h in Headers */,
 				E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */,
@@ -658,6 +783,7 @@
 				E0F413C91CF632120085166C /* SRKQuery+Private.h in Headers */,
 				E0F413A61CF632120085166C /* SRKEventBlockHolder.h in Headers */,
 				E0F413B51CF632120085166C /* SRKIndexDefinition+Private.h in Headers */,
+				3A1C0D2C1FA07B300014CBC3 /* SharkSync.h in Headers */,
 				E0F413A91CF632120085166C /* SRKEventHandler+Private.h in Headers */,
 				E0F413C11CF632120085166C /* SRKUnsupportedObject.h in Headers */,
 				E0F413B81CF632120085166C /* SRKEncryptedObject.h in Headers */,
@@ -711,16 +837,16 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Adrian Herridge";
 				TargetAttributes = {
 					E0F413461CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0900;
 					};
 					E0F413501CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0900;
 					};
 				};
 			};
@@ -769,31 +895,41 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0F413E21CF632120085166C /* SRKRelationship.m in Sources */,
+				3A1C0D2B1FA07B300014CBC3 /* SharkSync.m in Sources */,
 				E07C4F331D45F71400DB6CAB /* SRKStringObject.m in Sources */,
+				3A1C0D3C1FA07B300014CBC3 /* SRKSyncGroup.m in Sources */,
 				E0F413D51CF632120085166C /* SRKRegistryEntry.m in Sources */,
+				3A1C0D431FA07B300014CBC3 /* SRKDefunctObject.m in Sources */,
 				E0F413CD1CF632120085166C /* SRKQueryAsyncHandler.m in Sources */,
+				3A1C0D401FA07B300014CBC3 /* SRKSyncChange.m in Sources */,
 				E0F413C71CF632120085166C /* SRKJoinObject.m in Sources */,
 				E0F413C21CF632120085166C /* SRKUnsupportedObject.m in Sources */,
 				6915F03E1F2A51EF008B9842 /* SRKIndexProperty.m in Sources */,
 				E0F413CF1CF632120085166C /* SRKQueryProfile.m in Sources */,
 				E0F413A41CF632120085166C /* SRKEvent.m in Sources */,
+				3A1C0D361FA07B300014CBC3 /* SyncRequest.m in Sources */,
 				E0F413B01CF632120085166C /* FTSRegistry.m in Sources */,
 				E0F413AD1CF632120085166C /* SRKEventRegistryObject.m in Sources */,
+				3A1C0D301FA07B300014CBC3 /* SRKSyncRegisteredClass.m in Sources */,
 				E0F413BC1CF632120085166C /* SRKObject.m in Sources */,
 				E0F413E71CF632120085166C /* SRKSQLiteHandle.m in Sources */,
 				6915F0421F2A54DF008B9842 /* SRKCompoundIndex.m in Sources */,
 				E0F413BF1CF632120085166C /* SRKResultSet.m in Sources */,
 				E0F413CA1CF632120085166C /* SRKQuery.m in Sources */,
+				3A1C0D3A1FA07B300014CBC3 /* BaseCommsObject.m in Sources */,
 				E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */,
 				E0F413B31CF632120085166C /* SRKFuzzyStore.m in Sources */,
 				E0F413B91CF632120085166C /* SRKEncryptedObject.m in Sources */,
 				E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */,
 				E0F413D21CF632120085166C /* SRKRegistry.m in Sources */,
 				E02AC1BA1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */,
+				3A1C0D311FA07B300014CBC3 /* SRKSharkSyncAccountSettings.m in Sources */,
+				3A1C0D391FA07B300014CBC3 /* STHTTPRequest.m in Sources */,
 				E049CCED1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */,
 				E0F413ED1CF632120085166C /* SRKContext.m in Sources */,
 				E0F413B61CF632120085166C /* SRKIndexDefinition.m in Sources */,
 				3A330F631D25461500483626 /* SRKObjectChain.m in Sources */,
+				3A1C0D281FA07B300014CBC3 /* SRKSyncOptions.m in Sources */,
 				E0F413DC1CF632120085166C /* SRKError.m in Sources */,
 				E0A83F271DB75E82003F608B /* SRKGlobals.m in Sources */,
 				E0F413EF1CF632120085166C /* SRKTransaction.m in Sources */,
@@ -804,7 +940,11 @@
 				E0F413EA1CF632120085166C /* SRKUtilities.m in Sources */,
 				E0F413C41CF632120085166C /* SRKFTSQuery.m in Sources */,
 				E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */,
+				3A1C0D381FA07B300014CBC3 /* SRKSyncNodesList.m in Sources */,
+				3A1C0D411FA07B300014CBC3 /* SRKSyncObject.m in Sources */,
 				E0F413D91CF632120085166C /* SharkORM.m in Sources */,
+				3A1C0D331FA07B300014CBC3 /* SRKSyncAuthObject.m in Sources */,
+				3A1C0D321FA07B300014CBC3 /* SRKDeferredChange.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -892,14 +1032,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -943,14 +1089,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -995,7 +1147,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
@@ -1016,7 +1169,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
@@ -1032,7 +1186,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1045,7 +1200,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

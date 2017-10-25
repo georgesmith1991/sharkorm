@@ -9,6 +9,6 @@ import Foundation
 class StringIdObjectSwift : SRKObject {
     
     //override dynamic var Id: String!
-    dynamic var value: String?
+    @objc dynamic var value: String?
     
 }

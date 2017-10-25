@@ -23,8 +23,8 @@
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20170402
-#define SHARK_VER               2.01.03
+#define SHARK_DATE              20171025
+#define SHARK_VER               2.02.00
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -41,14 +41,14 @@
 @class SRKRawResults;
 @class SRKIndexProperty;
 
-typedef void(^SRKTransactionBlockBlock)();
+typedef void(^SRKTransactionBlockBlock)(void);
 
 /**
  * Called from within a transaction block to manually fail a transaction and cause a rollback.  Example, `SRKFailTransaction();`
  *
  * @return void
  */
-void SRKFailTransaction();
+void SRKFailTransaction(void);
 
 /**
  * SRKTransaction class, for wrapping multiple insert/update/delete commands within a single operation.

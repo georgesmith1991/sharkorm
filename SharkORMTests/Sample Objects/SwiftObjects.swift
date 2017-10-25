@@ -9,31 +9,31 @@ import Foundation
 
 class PersonSwift : SRKObject {
     
-    internal dynamic var Name: String?
-    internal dynamic var age: NSNumber?
-    internal dynamic var department: DepartmentSwift?
+    @objc internal dynamic var Name: String?
+    @objc internal dynamic var age: NSNumber?
+    @objc internal dynamic var department: DepartmentSwift?
     
 }
 
 class SmallPersonSwift : PersonSwift {
     
-    dynamic var height: NSNumber?
+    @objc dynamic var height: NSNumber?
     
 }
 
 class DepartmentSwift : SRKObject {
     
-    dynamic var name: String?
+    @objc dynamic var name: String?
     
 }
 
 class SwiftTestClass : SRKObject {
 	
-    dynamic var SwiftNumber: NSNumber?
-	dynamic var SwiftTestString : String?
-	dynamic var SwiftTestNumber : NSNumber?
-	dynamic var lowercaseField : String?
-    dynamic var isdeleted : Bool = false
+    @objc dynamic var SwiftNumber: NSNumber?
+	@objc dynamic var SwiftTestString : String?
+	@objc dynamic var SwiftTestNumber : NSNumber?
+	@objc dynamic var lowercaseField : String?
+    @objc dynamic var isdeleted : Bool = false
 	var nonDynamicVariable : String?
     var testVar : Int?
     
@@ -53,8 +53,8 @@ class SwiftTestClass : SRKObject {
 	
 	class PrivateSwiftClass: SRKObject {
 		
-		dynamic var SwiftTestString : String!
-		dynamic var SwiftTestNumber : NSNumber!
+		@objc dynamic var SwiftTestString : String!
+		@objc dynamic var SwiftTestNumber : NSNumber!
 		
 		func testThyself() {
 		
