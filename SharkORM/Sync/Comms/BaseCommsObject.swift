@@ -20,18 +20,10 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
+import Foundation
 
-
-#import "SharkORM.h"
-#import "SharkSync.h"
-
-@interface SharkSyncChange : SRKObject
-
-@property NSString*                     path;
-@property NSNumber*                     timestamp;
-@property NSString*                     value;
-@property SharkSyncOperation            action;
-@property NSString*                     recordGroup;
-@property NSString*                     sync_op;
-
-@end
+class BaseCommsObject : NSObject {
+    
+    
+    
+}

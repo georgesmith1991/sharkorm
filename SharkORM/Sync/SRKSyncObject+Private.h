@@ -21,21 +21,16 @@
 //    SOFTWARE.
 
 
-#import <Foundation/Foundation.h>
-#import "SRKSyncNodesList.h"
-#import "STHTTPRequest.h"
+#ifndef SRKSyncObject_Private_h
+#define SRKSyncObject_Private_h
 
-@interface BaseCommsObject : NSObject
+#import "SRKEntityChain.h"
 
-@property (strong) NSString* app_id;
-@property (strong) NSString* app_api_access_key;
-@property (strong) NSString* device_id;
-@property BOOL inProgress;
+@interface SRKSyncObject ()
 
-- (void)makeRequestToMethod:(NSString*)method apiVersion:(NSString*)apiVersion toNodes:(SRKSyncNodesList*)nodes;
-- (void)requestResponded:(NSDictionary*)response;
-- (void)requestDidError:(NSError*)NSError;
-- (NSMutableDictionary*)requestObject;
-- (void)execute;
+-(BOOL)__removeRawNoSync;
+-(BOOL)__commitRawWithObjectChainNoSync:(SRKEntityChain *)chain;
 
 @end
+
+#endif /* SRKSyncObject_Private_h */

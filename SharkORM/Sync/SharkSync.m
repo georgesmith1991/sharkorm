@@ -21,16 +21,13 @@
 //    SOFTWARE.
 
 
-
-#import "SharkSync.h"
 #import "SharkORM+Private.h"
 #import "SRKEntity+Private.h"
-#import "SRKSyncChange.h"
 #import "SRKDefunctObject.h"
-#import "SRKSyncGroup.h"
 #import "SRKSyncOptions.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "SRKAES256Extension.h"
+#import <SharkORM/SharkORM-Swift.h>
 
 #ifdef TARGET_OS_IPHONE
 #import <UIKit/UIImage.h>

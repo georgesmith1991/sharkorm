@@ -20,9 +20,21 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-#import "BaseCommsObject.h"
-#import "SharkOrm.h"
 
-@interface SyncRequest : BaseCommsObject
+import Foundation
 
-@end
+enum SyncRequestStatus {
+    case Failed
+    case Success
+    case Delayed
+    case Timeout
+}
+
+class RequestCarrier {
+    var requestIdentifier: String = ""
+    var payload: [String:Any]?
+    var closure: ((_ status: SyncRequestStatus,_ response: [String:Any]?) -> ())?
+    var repeating: Bool = false
+    var requestTimeout: Int = 60
+    var frequency: Int = 10
+}

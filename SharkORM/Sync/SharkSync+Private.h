@@ -25,7 +25,13 @@
 #ifndef SharkSync_Private_h
 #define SharkSync_Private_h
 
-#import "SharkSync.h"
+#import "SharkORM.h"
+#import "SRKSyncObject+Private.h"
+#import "SRKEntity+Private.h"
+#import "SharkORM+Private.h"
+#import "SharkSync+Private.h"
+#import "SRKDefunctObject.h"
+#import "SRKDeferredChange.h"
 
 @interface SharkSync ()
 

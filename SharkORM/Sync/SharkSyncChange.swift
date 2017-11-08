@@ -20,16 +20,15 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
+import Foundation
 
-
-#import "SharkORM.h"
-
-@interface SRKSyncGroup : SRKObject
-
-@property (strong) NSString*    groupName;
-@property (strong) NSString*    tidemark_uuid;
-@property (strong) NSNumber*    last_polled;
-
-+ (SRKSyncGroup*)groupWithEncodedName:(NSString*)name;
-
-@end
+@objc public class SharkSyncChange : SRKObject {
+    
+    @objc public var path: String?
+    @objc public var timestamp: NSNumber?
+    @objc public var value: String?
+    @objc public var action: Int = 0
+    @objc public var recordGroup: String?
+    @objc public var sync_op: String?
+    
+}

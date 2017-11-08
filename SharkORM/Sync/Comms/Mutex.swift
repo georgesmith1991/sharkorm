@@ -20,12 +20,29 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
+import Foundation
+import Dispatch
 
+class Mutex {
+    
+    private var thread: Thread? = nil;
+    private var lock: DispatchQueue
+    
+    init() {
+        lock = DispatchQueue(label: UUID().uuidString.lowercased())
+    }
+    
+    func mutex(_ closure: ()->()) {
+        if thread != Thread.current {
+            lock.sync {
+                thread = Thread.current
+                closure()
+                thread = nil
+            }
+        } else {
+            closure()
+        }
+    }
+    
+}
 
-#import "SharkORM.h"
-
-@interface SRKSyncObject : SRKStringObject
-
-- (BOOL)commitInGroup:(NSString*)group;
-
-@end

@@ -21,8 +21,6 @@
 //    SOFTWARE.
 
 
-#import "SRKSyncObject.h"
-#import "SharkSync.h"
 #import "SRKSyncOptions.h"
 #import "SharkORM+Private.h"
 #import "SharkSync+Private.h"
@@ -41,12 +39,12 @@
 
 - (BOOL)commit {
     
-    /* because this is going to happen now, we need to generate a primary key now */
+    /* because this is going to happen, we need to generate a primary key now */
     if (!self.Id) {
         [self setId:[[NSUUID UUID] UUIDString]];
     }
     
-    return [self commitInGroup:SHARKSYNC_DEFAULT_GROUP];
+    return [self commitInGroup:SHARKSYNC_DEFAULT_GROUP]; // set the global group
     
 }
 

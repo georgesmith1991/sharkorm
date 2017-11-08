@@ -20,16 +20,16 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
+import Foundation
 
+@objc public class SRKSyncGroup : SRKObject {
+    
+    @objc public var groupName: String?
+    @objc public var tidemark_uuid: String?
+    @objc public var last_polled: NSNumber?
 
-#import "SRKSyncGroup.h"
-
-@implementation SRKSyncGroup
-
-@dynamic groupName,tidemark_uuid, last_polled;
-
-+ (SRKSyncGroup *)groupWithEncodedName:(NSString *)name {
-    return [[[[SRKSyncGroup query] whereWithFormat:@"groupName = %@", name] limit:1] fetch].firstObject;
+    @objc public class func groupWithEncodedName(_ name: String) -> SRKSyncGroup? {
+        return SRKSyncGroup.query().where(withFormat: "groupName = %@", withParameters: [name]).limit(1).fetch().firstObject as? SRKSyncGroup
+    }
+    
 }
-
-@end
