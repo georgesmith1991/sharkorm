@@ -21,14 +21,7 @@
 //    SOFTWARE.
 
 import Foundation
-import SharkSyncPrivate
-
-enum SharkSyncOperation : Int {
-    case Undefined = 0
-    case Insert = 1
-    case Update = 2
-    case Delete = 3
-}
+import SharkPrivate
 
 class SyncRequest {
     
@@ -39,6 +32,14 @@ class SyncRequest {
         
         var requestData: [String: Any] = [:]
         
+        // embed the current session information
+        requestData["app_id"] = SharkSync.sharedObject().applicationKey
+        requestData["device_id"] = SharkSync.sharedObject().deviceId
+        requestData["app_api_access_key"] = SharkSync.sharedObject().accountKeyKey
+        
+        // debug/testing
+        requestData["device_id"] = "9e4ac6a5-aac3-4362-b530-0be53a9e6619"
+        
         // pull out a reasonable amount of writes to be sent to the server
         let changeResults = (SharkSyncChange.query().limit(100).order(by: "timestamp").fetch()) as! [SharkSyncChange]
         self.changes = changeResults
@@ -47,9 +48,10 @@ class SyncRequest {
         var changes: [[String:Any]] = []
         
         for change: SharkSyncChange in changeResults {
+            let secondsAgo = Date().timeIntervalSince1970 - change.timestamp
             changes.append(["path": change.path ?? "",
                             "value": change.value ?? "",
-                            "secondsAgo": (Date().timeIntervalSince1970 - (change.timestamp?.doubleValue)!),
+                            "secondsAgo": secondsAgo,
                             "group": change.recordGroup ?? "",
                             "operation": change.action]
             )
@@ -68,7 +70,7 @@ class SyncRequest {
         return requestData
     }
     
-    func requestResponded(_ response: [String: Any]) {
+    func requestResponded(_ response: [String: Any], changes: [SharkSyncChange]) {
         
         /* clear down the transmitted data, as we know it arrived okay */
         self.changes.removeAll()
@@ -79,30 +81,9 @@ class SyncRequest {
             return
         }
         
-        // check for sync_id which is out of step with our current stored data/
-        /*
-         *   NOTE: the sync id has changed, so we essentially, have to destroy the local data and re-sync with the server as the state is unknown.  E.g. Server data restored, corruption fixed, etc.  Not a common thing, only used in extreme scenarios.
-         */
-        
-        if response["SyncID"] != nil {
-            // TODO:  check and dump data
-            //            if data?["sync_id"] != nil {
-            //                let options = SRKSyncOptions.query().limit(1).fetch().first
-            //                if options?.sync_id == nil {
-            //                    options?.sync_id = data?["sync_id"]
-            //                    options?.commit()
-            //                }
-            //                else {
-            //                    if !options?.sync_id == data?["sync_id"] {
-            //                        // clear the outbound
-            //                        SharkSyncChange.query().fetchLightweight().removeAll()
-            //                        // clear all the registered classes that have ever had any data
-            //                        options?.device_id = UUID().uuidString
-            //                        options?.commit()
-            //                        return
-            //                    }
-            //                }
-            //            }
+        // remove the outbound items
+        for change in changes {
+            change.remove()
         }
         
         /* now work through the response */
@@ -116,94 +97,86 @@ class SyncRequest {
                 
                 let path = (change["Path"] as? String ?? "//").components(separatedBy: "/")
                 let value = change["Value"] as? String ?? ""
-                // let modified = change["Modified"] as? String ?? ""
-                let operation = change["Operation"] as? SharkSyncOperation ?? .Undefined
                 let record_id = path[0]
                 let class_name = path[1]
                 let property = path[2]
                 
                 // process this change
-                if operation == .Delete {
+                if property.contains("__delete__") {
                     
                     /* just delete the record and add an entry into the destroyed table to prevent late arrivals from breaking things */
-                    let objClass: AnyClass? = NSClassFromString(class_name)
-                    if objClass != nil {
-                        let deadObject: SRKSyncObject? = objClass!.object(withPrimaryKeyValue: NSString(string: record_id)) as? SRKSyncObject
-                        if deadObject != nil {
-                            deadObject?.__removeRawNoSync()
-                        }
-                        let defObj = SRKDefunctObject()
-                        defObj.defunctId = record_id
-                        defObj.commit()
-                        
+                    let deadObject = SRKSyncObject.object(fromClass: class_name, withPrimaryKey: record_id) as? SRKSyncObject
+                    if deadObject != nil {
+                        deadObject?.__removeRawNoSync()
                     }
+                    let defObj = SRKDefunctObject()
+                    defObj.defunctId = record_id
+                    defObj.commit()
                     
                 } else {
                     
                     // deal with an insert/update
                     
-                    let objClass: AnyClass? = NSClassFromString(class_name)
-                    if objClass != nil {
+                    // existing object, uopdate the value
+                    var decryptedValue = SharkSync.decryptValue(value)
+                    
+                    let targetObject = SRKSyncObject.object(fromClass: class_name, withPrimaryKey: record_id) as? SRKSyncObject
+                    if targetObject != nil {
                         
-                        // existing object, uopdate the value
-                        var decryptedValue = SharkSync.decryptValue(value)
-                        
-                        let targetObject: SRKSyncObject? = objClass!.object(withPrimaryKeyValue: NSString(string: record_id)) as? SRKSyncObject
-                        if targetObject != nil {
-                            
-                            // check to see if this property is actually in the class, if not, store it for a future schema
-                            for fieldName: String in targetObject!.fieldNames() as! [String] {
-                                if (fieldName == property) {
-                                    targetObject?.setField(property, value: decryptedValue as! NSObject)
-                                    if targetObject?.__commitRaw(withObjectChainNoSync: nil) != nil {
-                                        decryptedValue = nil
-                                    }
+                        // check to see if this property is actually in the class, if not, store it for a future schema
+                        for fieldName: String in targetObject!.fieldNames() as! [String] {
+                            if (fieldName == property) {
+                                targetObject?.setField(property, value: decryptedValue as! NSObject)
+                                if targetObject?.getRecordGroup() == nil {
+                                    targetObject?.setRecordVisibilityGroup(groupName)
+                                }
+                                if targetObject?.__commitRaw(withObjectChainNoSync: nil) != nil {
+                                    decryptedValue = nil
                                 }
                             }
+                        }
+                        
+                        if decryptedValue != nil {
                             
-                            if decryptedValue != nil {
-                                
-                                // cache this object for a future instance of the schema, when this field exists
-                                let deferredChange = SRKDeferredChange()
-                                deferredChange.key = record_id
-                                deferredChange.className = class_name
-                                deferredChange.value = value
-                                deferredChange.property = property
-                                deferredChange.commit()
-                                
-                            }
+                            // cache this object for a future instance of the schema, when this field exists
+                            let deferredChange = SRKDeferredChange()
+                            deferredChange.key = record_id
+                            deferredChange.className = class_name
+                            deferredChange.value = value
+                            deferredChange.property = property
+                            deferredChange.commit()
                             
                         }
+                        
+                    }
+                    else {
+                        if SRKDefunctObject.query().where(withFormat: "defunctId = %@", withParameters: [record_id]).count() > 0 {
+                            // defunct object, do nothing
+                        }
                         else {
-                            if SRKDefunctObject.query().where(withFormat: "defunctId = %@", withParameters: [record_id]).count() > 0 {
-                                // defunct object, do nothing
-                            }
-                            else {
-                                // not previously defunct, but new key found, so create an object and set the value
-                                let cls = NSClassFromString(class_name) as? SRKSyncObject.Type
-                                let targetObject = cls?.init()
-                                if targetObject != nil {
-                                    
-                                    targetObject!.id = record_id
-                                    
-                                    // check to see if this property is actually in the class, if not, store it for a future schema
-                                    for fieldName: String in targetObject!.fieldNames() as! [String] {
-                                        if (fieldName == property) {
-                                            targetObject!.setField(property, value: decryptedValue as! NSObject)
-                                            if targetObject!.__commitRaw(withObjectChainNoSync: nil) {
-                                                decryptedValue = nil
-                                            }
+                            // not previously defunct, but new key found, so create an object and set the value
+                            let targetObject = SRKSyncObject.object(fromClass: class_name) as? SRKSyncObject
+                            if targetObject != nil {
+                                
+                                targetObject!.id = record_id
+                                
+                                // check to see if this property is actually in the class, if not, store it for a future schema
+                                for fieldName: String in targetObject!.fieldNames() as! [String] {
+                                    if (fieldName == property) {
+                                        targetObject!.setField(property, value: decryptedValue as! NSObject)
+                                        if targetObject!.__commitRaw(withObjectChainNoSync: nil) {
+                                            decryptedValue = nil
                                         }
                                     }
-                                    if decryptedValue != nil {
-                                        // cache this object for a future instance of the schema, when this field exists
-                                        let deferredChange = SRKDeferredChange()
-                                        deferredChange.key = record_id
-                                        deferredChange.className = class_name
-                                        deferredChange.value = value
-                                        deferredChange.property = property
-                                        deferredChange.commit()
-                                    }
+                                }
+                                if decryptedValue != nil {
+                                    // cache this object for a future instance of the schema, when this field exists
+                                    let deferredChange = SRKDeferredChange()
+                                    deferredChange.key = record_id
+                                    deferredChange.className = class_name
+                                    deferredChange.value = value
+                                    deferredChange.property = property
+                                    deferredChange.commit()
                                 }
                             }
                         }
@@ -223,4 +196,5 @@ class SyncRequest {
             
         }
     }
+    
 }

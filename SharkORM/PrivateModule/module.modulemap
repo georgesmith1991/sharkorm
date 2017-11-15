@@ -1,4 +1,4 @@
-module SharkSyncPrivate {
+module SharkPrivate {
     header "../Sync/SharkSync+Private.h"
     export *
 }

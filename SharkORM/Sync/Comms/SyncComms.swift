@@ -25,7 +25,7 @@ import Foundation
 public class SyncComms {
     
     func selectEndpoint() -> URL {
-        return URL(string:"http://api.sharksync.com/sync")!
+        return URL(string:"http://api.sharksync.io:5000/sync")!
     }
     
     func request(payload: [String:Any]) -> [String:Any]? {

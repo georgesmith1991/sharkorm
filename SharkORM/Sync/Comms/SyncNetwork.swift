@@ -23,22 +23,23 @@
 
 import Foundation
 
-class SyncNetwork {
+class SyncNetwork : NSObject {
     
     static let sharedInstance = SyncNetwork()
-    private init() {}
+    override private init() {
+        super.init()
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
+            self.runQueue()
+        }
+    }
     
-    var authToken: String = ""
     var endpoints: [String] = []
     
     // data to be sent with each request to the service
     var device_id: String?
     var app_id: String?
     var api_key: String?
-    var initialised: Bool = false
-    
-    // the outbound packet queue as an array of mutable dictionaries
-    private var queue: [RequestCarrier] = []
+    public var active: Bool = false
     
     // status change blocks
     private var connected: Bool = false
@@ -46,44 +47,6 @@ class SyncNetwork {
     private var connectionDisconnectedClosure: ((_ error: String?)->())? = nil
 
     private var lock: Mutex = Mutex()
-    
-    // add an item to the queue, with the matching closure to be executed when complete
-    func queueItem(_ request: RequestCarrier) {
-        lock.mutex {
-            queue.append(request)
-        }
-    }
-    
-    // removes all queued items from the queue
-    func resetQueue() {
-        lock.mutex {
-            queue.removeAll()
-        }
-    }
-    
-    // remove a specific request from the queue, e.g. change group visibility
-    func removeRequest(identifier: String) {
-        
-        lock.mutex {
-            
-            var i = 0
-            var idx: Int? = nil
-            
-            for r in self.queue {
-                if r.requestIdentifier == identifier {
-                    idx = i
-                    break
-                }
-                i += 1
-            }
-            
-            if idx != nil {
-                queue.remove(at: idx!)
-            }
-            
-        }
-        
-    }
     
     // set the block which gets executed when service is online & available
     // use this to setup the initial request framework
@@ -100,33 +63,13 @@ class SyncNetwork {
     
     func runQueue() {
         
+        let r = SyncRequest()
+        
         while(true) {
             
-            if initialised {
+            if active {
             
-                // this function runs in perpetuity, sending all requests in the queue to the endpoint
-                var r: RequestCarrier? = nil
-                
-                lock.mutex {
-                    // pull the first object from the queue
-                    if queue.count > 0 {
-                        r = queue[0]
-                        queue.remove(at: 0)
-                    }
-                }
-                
-                if r != nil {
-                    
-                    // we have a request, lets pack this off to the service
-                    let s = SyncComms()
-                    let response = s.request(payload: (r?.payload)!)
-                    if response != nil {
-                        r?.closure!(SyncRequestStatus.Success, response!)
-                    } else {
-                        r?.closure!(SyncRequestStatus.Failed, nil)
-                    }
-                    
-                }
+                makeRequest(r)
                 
             }
             
@@ -134,5 +77,21 @@ class SyncNetwork {
             
         }
         
+    }
+    
+    func makeRequest(_ r: SyncRequest) {
+        
+        let s = SyncComms()
+        let response = s.request(payload: r.requestObject())
+        if response != nil {
+            r.requestResponded(response!, changes: r.changes)
+        } else {
+            
+        }
+        
+    }
+    
+    func synchroniseNow() {
+        makeRequest(SyncRequest())
     }
 }

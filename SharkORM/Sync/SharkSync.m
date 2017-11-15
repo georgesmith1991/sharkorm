@@ -28,6 +28,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "SRKAES256Extension.h"
 #import <SharkORM/SharkORM-Swift.h>
+#import "SRKSyncRegisteredClass.h"
 
 #ifdef TARGET_OS_IPHONE
 #import <UIKit/UIImage.h>
@@ -37,6 +38,14 @@ typedef UIImage XXImage;
 typedef NSImage XXImage;
 #endif
 
+typedef enum : NSUInteger {
+    SharkSyncOperationCreate = 1,     // a new object has been created
+    SharkSyncOperationSet = 2,        // a value(s) have been set
+    SharkSyncOperationDelete = 3,     // object has been removed from the store
+    SharkSyncOperationIncrement = 4,  // value has been incremented - future implementation
+    SharkSyncOperationDecrement = 5,  // value has been decremented - future implementation
+} SharkSyncOperation;
+
 @interface SharkSync ()
 
 @property (strong) NSMutableDictionary* concurrentRecordGroups;
@@ -45,13 +54,13 @@ typedef NSImage XXImage;
 
 @implementation SharkSync
 
-+ (void)startServiceWithApplicationId:(NSString*)application_key apiKey:(NSString*)account_key {
++ (void)initServiceWithApplicationId:(NSString*)application_key apiKey:(NSString*)account_key {
     
     /* get the options object */
     SRKSyncOptions* options = [[[[SRKSyncOptions query] limit:1] fetch] firstObject];
     if (!options) {
         options = [SRKSyncOptions new];
-        options.device_id = [[NSUUID UUID] UUIDString];
+        options.device_id = [[[NSUUID UUID] UUIDString] lowercaseString];
         [options commit];
     }
     
@@ -62,8 +71,22 @@ typedef NSImage XXImage;
     
     sync.settings = [SharkSyncSettings new];
     
-    // now go and ask the delegate for the new settings to overwrite the default ones
-    
+}
+
++ (void)setSyncSettings:(SharkSyncSettings*) settings {
+    [SharkSync setSyncSettings:settings];
+}
+
++ (void)startSynchronisation {
+    [SyncService StartService];
+}
+
++ (void)synchroniseNow {
+    [SyncService SynchroniseNow];
+}
+
++ (void)stopSynchronisation {
+    [SyncService StopService];
 }
 
 + (instancetype)sharedObject {
@@ -105,7 +128,19 @@ typedef NSImage XXImage;
 }
 
 + (void)removeVisibilityGroup:(NSString *)visibilityGroup {
-    [[[[[SRKSyncGroup query] whereWithFormat:@"groupName = %@", [self MD5FromString:visibilityGroup]] limit:1] fetch] removeAll];
+    
+    NSString* vg = [self MD5FromString:visibilityGroup];
+    
+    [[[[[SRKSyncGroup query] whereWithFormat:@"groupName = %@", vg]  limit:1] fetch] removeAll];
+    
+    // now we need to remove all the records which were part of this visibility group
+    for (SRKSyncRegisteredClass* c in [[SRKSyncRegisteredClass query] fetch]) {
+        NSString* sql = [NSString stringWithFormat:@"DELETE FROM %@ WHERE recordVisibilityGroup = '%@'", c.className, vg];
+        // TODO: execute against all attached databases
+        [SharkORM executeSQL:sql inDatabase:nil];
+    }
+    
+    
 }
 
 + (NSString*)getEffectiveRecordGroup {
@@ -131,7 +166,7 @@ typedef NSImage XXImage;
     if (![value containsString:@"/"]) {
         return nil;
     }
-
+    
     NSRange r = [value rangeOfString:@"/"];
     NSString* type = [value substringToIndex:r.location];
     NSString* data = [value substringFromIndex:r.location+1];
@@ -145,82 +180,82 @@ typedef NSImage XXImage;
     dValue = settings.decryptBlock(dValue);
     
     
-        if ([type isEqualToString:@"text"]) {
+    if ([type isEqualToString:@"text"]) {
+        
+        // turn the data back to a string
+        NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+        
+        return sValue;
+        
+    } else if ([type isEqualToString:@"number"]) {
+        
+        // turn the data back to a string
+        NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+        
+        // now turn the sValue back to it's original value
+        NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+        f.numberStyle = NSNumberFormatterDecimalStyle;
+        return [f numberFromString:sValue];
+        
+    } else if ([type isEqualToString:@"date"]) {
+        
+        // turn the data back to a string
+        NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+        
+        // now turn the sValue back to it's original value
+        NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+        f.numberStyle = NSNumberFormatterDecimalStyle;
+        return [NSDate dateWithTimeIntervalSince1970:[f numberFromString:sValue].doubleValue];
+        
+    } else if ([type isEqualToString:@"bytes"]) {
+        
+        return dValue;
+        
+    } else if ([type isEqualToString:@"image"]) {
+        
+        // turn the data back to an image
+        return [UIImage imageWithData:dValue];
+        
+    } else if ([type isEqualToString:@"mdictionary"] || [type isEqualToString:@"dictionary"] || [type isEqualToString:@"marray"] || [type isEqualToString:@"array"]) {
+        
+        NSError* error;
+        
+        if ([type isEqualToString:@"mdictionary"]) {
             
-            // turn the data back to a string
-            NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+            return [NSMutableDictionary dictionaryWithDictionary:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
             
-            return sValue;
+        } else if ([type isEqualToString:@"dictionary"]) {
             
-        } else if ([type isEqualToString:@"number"]) {
+            return [NSDictionary dictionaryWithDictionary:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
             
-            // turn the data back to a string
-            NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+        } else if ([type isEqualToString:@"array"]) {
             
-            // now turn the sValue back to it's original value
-            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-            f.numberStyle = NSNumberFormatterDecimalStyle;
-            return [f numberFromString:sValue];
+            return [NSArray arrayWithArray:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
             
-        } else if ([type isEqualToString:@"date"]) {
-
-            // turn the data back to a string
-            NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+        } else if ([type isEqualToString:@"marray"]) {
             
-            // now turn the sValue back to it's original value
-            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-            f.numberStyle = NSNumberFormatterDecimalStyle;
-            return [NSDate dateWithTimeIntervalSince1970:[f numberFromString:sValue].doubleValue];
-            
-        } else if ([type isEqualToString:@"bytes"]) {
-            
-            return dValue;
-            
-        } else if ([type isEqualToString:@"image"]) {
-
-            // turn the data back to an image
-            return [UIImage imageWithData:dValue];
-            
-        } else if ([type isEqualToString:@"mdictionary"] || [type isEqualToString:@"dictionary"] || [type isEqualToString:@"marray"] || [type isEqualToString:@"array"]) {
-
-            NSError* error;
-            
-            if ([type isEqualToString:@"mdictionary"]) {
-                
-                return [NSMutableDictionary dictionaryWithDictionary:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
-                
-            } else if ([type isEqualToString:@"dictionary"]) {
-                
-                return [NSDictionary dictionaryWithDictionary:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
-                
-            } else if ([type isEqualToString:@"array"]) {
-                
-                return [NSArray arrayWithArray:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
-                
-            } else if ([type isEqualToString:@"marray"]) {
-                
-                return [NSMutableArray arrayWithArray:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
-                
-            }
-            
-            
-        }  else if ([type isEqualToString:@"entity"]) {
-            
-            NSData* dValue = [[NSData alloc] initWithBase64EncodedData:[NSData dataWithBytes:data.UTF8String length:data.length] options:0];
-            
-            // call the block in the sync settings to encrypt the data
-            SharkSync* sync = [SharkSync sharedObject];
-            SharkSyncSettings* settings = sync.settings;
-            
-            dValue = settings.decryptBlock(dValue);
-            
-            // turn the data back to a string
-            NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
-            
-            // now turn the sValue back to it's original value
-            return sValue;
+            return [NSMutableArray arrayWithArray:[NSJSONSerialization JSONObjectWithData:dValue options:NSJSONReadingMutableLeaves error:&error]];
             
         }
+        
+        
+    }  else if ([type isEqualToString:@"entity"]) {
+        
+        NSData* dValue = [[NSData alloc] initWithBase64EncodedData:[NSData dataWithBytes:data.UTF8String length:data.length] options:0];
+        
+        // call the block in the sync settings to encrypt the data
+        SharkSync* sync = [SharkSync sharedObject];
+        SharkSyncSettings* settings = sync.settings;
+        
+        dValue = settings.decryptBlock(dValue);
+        
+        // turn the data back to a string
+        NSString* sValue = [[NSString alloc] initWithData:dValue encoding:NSUnicodeStringEncoding];
+        
+        // now turn the sValue back to it's original value
+        return sValue;
+        
+    }
     
     return nil;
     
@@ -248,7 +283,7 @@ typedef NSImage XXImage;
                         type = @"text";
                         
                         NSData* dValue = [((NSString*)value) dataUsingEncoding: NSUnicodeStringEncoding];
-                       
+                        
                         // call the block in the sync settings to encrypt the data
                         SharkSync* sync = [SharkSync sharedObject];
                         SharkSyncSettings* settings = sync.settings;
@@ -259,14 +294,14 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
                         
                     } else if ([value isKindOfClass:[NSNumber class]]) {
                         
-                        type = @"number";                        
+                        type = @"number";
                         NSData* dValue = [[NSString stringWithFormat:@"%@", value] dataUsingEncoding: NSUnicodeStringEncoding];
                         
                         // call the block in the sync settings to encrypt the data
@@ -279,7 +314,7 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
@@ -300,7 +335,7 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
@@ -321,7 +356,7 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
@@ -342,7 +377,7 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
@@ -361,7 +396,7 @@ typedef NSImage XXImage;
                         
                         NSError* error;
                         NSData* dValue = [NSJSONSerialization dataWithJSONObject:value options:NSJSONWritingPrettyPrinted error:&error];
-
+                        
                         // call the block in the sync settings to encrypt the data
                         SharkSync* sync = [SharkSync sharedObject];
                         SharkSyncSettings* settings = sync.settings;
@@ -372,7 +407,7 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
@@ -393,7 +428,7 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         NSString* b64Value = [dValue base64EncodedStringWithOptions:0];
                         change.value = [NSString stringWithFormat:@"%@/%@",type,b64Value];
                         [change commit];
@@ -404,12 +439,12 @@ typedef NSImage XXImage;
                         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], property];
                         change.action = operation;
                         change.recordGroup = group;
-                        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+                        change.timestamp = [[NSDate date] timeIntervalSince1970];
                         change.value = nil;
                         [change commit];
                         
                     }
-                
+                    
                 }
                 
             }
@@ -421,7 +456,7 @@ typedef NSImage XXImage;
         change.path = [NSString stringWithFormat:@"%@/%@/%@", object.Id, [[object class] description], @"__delete__"];
         change.action = operation;
         change.recordGroup = group;
-        change.timestamp = @([[NSDate date] timeIntervalSince1970]);
+        change.timestamp = [[NSDate date] timeIntervalSince1970];
         [change commit];
         
     }
@@ -438,9 +473,10 @@ typedef NSImage XXImage;
         
         // these are just defaults to ensure all data is encrypted, it is reccommended that you develop your own or at least set your own aes256EncryptionKey value.
         
+        self.autoSubscribeToGroupsWhenCommiting = YES;
         self.aes256EncryptionKey = [SharkSync sharedObject].applicationKey;
         self.encryptBlock = ^NSData*(NSData* dataToEncrypt) {
-           
+            
             SharkSync* sync = [SharkSync sharedObject];
             SharkSyncSettings* settings = sync.settings;
             

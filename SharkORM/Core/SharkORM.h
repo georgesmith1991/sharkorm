@@ -1079,15 +1079,7 @@ typedef void(^SRKQueryAsyncResponse)(SRKResultSet* results);
     
 - (BOOL)commitInGroup:(NSString*)group;
     
-    @end
-
-typedef enum : NSUInteger {
-    SharkSyncOperationCreate,     // a new object has been created
-    SharkSyncOperationSet,        // a value(s) have been set
-    SharkSyncOperationDelete,     // object has been removed from the store
-    SharkSyncOperationIncrement,  // value has been incremented - future implementation
-    SharkSyncOperationDecrement,  // value has been decremented - future implementation
-} SharkSyncOperation;
+@end
 
 @protocol SharkSyncDelegate <NSObject>
     
@@ -1105,9 +1097,12 @@ typedef enum : NSUInteger {
     @property (strong) NSString* deviceId;
     
 + (instancetype)sharedObject;
-+ (void)startServiceWithApplicationId:(NSString*)application_key apiKey:(NSString*)account_key;
-+ (void)queueObject:(SRKEntity *)object withChanges:(NSMutableDictionary*)changes withOperation:(SharkSyncOperation)operation inHashedGroup:(NSString*)group;
-    
++ (void)initServiceWithApplicationId:(NSString*)application_key apiKey:(NSString*)account_key;
++ (void)setSyncSettings:(SharkSyncSettings*) settings;
++ (void)startSynchronisation;
++ (void)stopSynchronisation;
++ (void)synchroniseNow;
+   
     // group management
 + (void)addVisibilityGroup:(NSString*)visibilityGroup;
 + (void)removeVisibilityGroup:(NSString*)visibilityGroup;
@@ -1118,12 +1113,13 @@ typedef NSData*(^SharkSyncEncryptionBlock)(NSData* dataToEncrypt);
 typedef NSData*(^SharkSyncDecryptionBlock)(NSData* dataToDecrypt);
 
 @interface SharkSyncSettings : NSObject
-    
-    @property (copy) SharkSyncEncryptionBlock encryptBlock;
-    @property (copy) SharkSyncDecryptionBlock decryptBlock;
-    @property (strong) NSString* aes256EncryptionKey;
-    
-    @end
+
+@property (copy)    SharkSyncEncryptionBlock encryptBlock;
+@property (copy)    SharkSyncDecryptionBlock decryptBlock;
+@property (strong)  NSString* aes256EncryptionKey;
+@property BOOL      autoSubscribeToGroupsWhenCommiting;
+
+@end
 
 #endif
 

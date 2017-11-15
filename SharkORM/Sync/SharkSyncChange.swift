@@ -24,11 +24,11 @@ import Foundation
 
 @objc public class SharkSyncChange : SRKObject {
     
-    @objc public var path: String?
-    @objc public var timestamp: NSNumber?
-    @objc public var value: String?
-    @objc public var action: Int = 0
-    @objc public var recordGroup: String?
-    @objc public var sync_op: String?
+    @objc public dynamic var path: String?
+    @objc public dynamic var timestamp: Double = 0
+    @objc public dynamic var value: String?
+    @objc public dynamic var action: Int = 0
+    @objc public dynamic var recordGroup: String?
+    @objc public dynamic var sync_op: String?
     
 }

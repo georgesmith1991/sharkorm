@@ -24,9 +24,9 @@ import Foundation
 
 @objc public class SRKSyncGroup : SRKObject {
     
-    @objc public var groupName: String?
-    @objc public var tidemark_uuid: String?
-    @objc public var last_polled: NSNumber?
+    @objc public dynamic var groupName: String?
+    @objc public dynamic var tidemark_uuid: String?
+    @objc public dynamic var last_polled: NSNumber?
 
     @objc public class func groupWithEncodedName(_ name: String) -> SRKSyncGroup? {
         return SRKSyncGroup.query().where(withFormat: "groupName = %@", withParameters: [name]).limit(1).fetch().firstObject as? SRKSyncGroup

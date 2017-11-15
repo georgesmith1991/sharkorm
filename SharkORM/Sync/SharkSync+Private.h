@@ -25,10 +25,10 @@
 #ifndef SharkSync_Private_h
 #define SharkSync_Private_h
 
-#import "SharkORM.h"
+#import "../Core/SharkORM.h"
 #import "SRKSyncObject+Private.h"
-#import "SRKEntity+Private.h"
-#import "SharkORM+Private.h"
+#import "../Core/PersistableObjects/SRKEntity+Private.h"
+#import "../Core/SharkORM+Private.h"
 #import "SharkSync+Private.h"
 #import "SRKDefunctObject.h"
 #import "SRKDeferredChange.h"
@@ -40,6 +40,7 @@
 + (void)setEffectiveRecorGroup:(NSString*)group;
 + (void)clearEffectiveRecordGroup;
 + (id)decryptValue:(NSString*)value;
++ (void)queueObject:(SRKEntity *)object withChanges:(NSMutableDictionary*)changes withOperation:(NSUInteger)operation inHashedGroup:(NSString*)group;
 
 @end
 

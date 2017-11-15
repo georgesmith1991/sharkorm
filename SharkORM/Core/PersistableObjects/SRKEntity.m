@@ -1539,7 +1539,7 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
     /* call open to ensure there is a database opened for the storage database of this class */
     [SharkORM openDatabaseNamed:[SharkORM databaseNameForClass:[self class]]];
     
-    if (![strClassName isEqualToString:@"SRKObject"] && ![strClassName isEqualToString:@"SRKSyncObject"] && ![strClassName isEqualToString:@"SRKStringObject"] && ![strClassName isEqualToString:@"SRKEntity"]) {
+    if (![strClassName isEqualToString:@"SRKObject"] && ![strClassName isEqualToString:@"SRKSyncObject2"] && ![strClassName isEqualToString:@"SRKStringObject"] && ![strClassName isEqualToString:@"SRKEntity"]) {
         
         if ([refactoredEntities objectForKey:strClassName] == nil) {
             
@@ -1564,10 +1564,10 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
             NSMutableArray* classes = [NSMutableArray new];
             [classes addObject:c];
             Class startClass = [self class];
-            while ([[startClass superclass] isSubclassOfClass:[SRKEntity class]] && (![[[startClass superclass] description] isEqualToString:@"SRKEntity"] && ![[[startClass superclass] description] isEqualToString:@"SRKObject"] && ![[[startClass superclass] description] isEqualToString:@"SRKStringObject"] && ![[[startClass superclass] description] isEqualToString:@"SRKSyncObject"])) {
+            while ([[startClass superclass] isSubclassOfClass:[SRKEntity class]] && (![[[startClass superclass] description] isEqualToString:@"SRKEntity"] && ![[[startClass superclass] description] isEqualToString:@"SRKObject"] && ![[[startClass superclass] description] isEqualToString:@"SRKStringObject"] && ![[[startClass superclass] description] isEqualToString:@"SRKSyncObject2"])) {
                 [classes addObject:[startClass superclass]];
                 startClass = [startClass superclass];
-                if ([[startClass.superclass description] isEqualToString:@"SRKEntity"] || [[startClass.superclass description] isEqualToString:@"SRKObject"] | [[startClass.superclass description] isEqualToString:@"SRKStringObject"] || [[startClass.superclass description] isEqualToString:@"SRKSyncObject"]) {
+                if ([[startClass.superclass description] isEqualToString:@"SRKEntity"] || [[startClass.superclass description] isEqualToString:@"SRKObject"] | [[startClass.superclass description] isEqualToString:@"SRKStringObject"] || [[startClass.superclass description] isEqualToString:@"SRKSyncObject2"]) {
                     break;
                 }
             }

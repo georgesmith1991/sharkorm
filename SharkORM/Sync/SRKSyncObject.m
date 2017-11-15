@@ -26,6 +26,15 @@
 #import "SharkSync+Private.h"
 #import "SRKEntity+Private.h"
 #import "SRKEntityChain.h"
+#import "SRKSyncRegisteredClass.h"
+
+typedef enum : NSUInteger {
+    SharkSyncOperationCreate = 1,     // a new object has been created
+    SharkSyncOperationSet = 2,        // a value(s) have been set
+    SharkSyncOperationDelete = 3,     // object has been removed from the store
+    SharkSyncOperationIncrement = 4,  // value has been incremented - future implementation
+    SharkSyncOperationDecrement = 5,  // value has been decremented - future implementation
+} SharkSyncOperation;
 
 @interface SRKSyncObject ()
 
@@ -37,11 +46,23 @@
 
 @dynamic recordVisibilityGroup;
 
++ (void)initialize {
+    
+    [super initialize];
+    
+    if (![[[SRKSyncRegisteredClass query] whereWithFormat:@"className = %@", [self description]] count]) {
+        SRKSyncRegisteredClass* c = [SRKSyncRegisteredClass new];
+        c.className = [self description];
+        [c commit];
+    }
+    
+}
+
 - (BOOL)commit {
     
     /* because this is going to happen, we need to generate a primary key now */
     if (!self.Id) {
-        [self setId:[[NSUUID UUID] UUIDString]];
+        [self setId:[[[NSUUID UUID] UUIDString] lowercaseString]];
     }
     
     return [self commitInGroup:SHARKSYNC_DEFAULT_GROUP]; // set the global group
@@ -67,9 +88,13 @@
 
 - (BOOL)remove {
     
-    [SharkSync setEffectiveRecorGroup:self.recordVisibilityGroup];
+    if (!self.recordVisibilityGroup) {
+        [SharkSync setEffectiveRecorGroup:[SharkSync MD5FromString:SHARKSYNC_DEFAULT_GROUP]];
+    } else {
+        [SharkSync setEffectiveRecorGroup:self.recordVisibilityGroup];
+    }
+    
     if ([super remove]) {
-        [SharkSync queueObject:self withChanges:nil withOperation:SharkSyncOperationDelete inHashedGroup:self.recordVisibilityGroup];
         [SharkSync clearEffectiveRecordGroup];
         return YES;
     }
@@ -96,7 +121,7 @@
         [SharkSync queueObject:self withChanges:nil withOperation:SharkSyncOperationDelete inHashedGroup:self.recordVisibilityGroup];
         
         // generate the new UUID
-        NSString* newUUID = [[NSUUID UUID] UUIDString];
+        NSString* newUUID = [[[NSUUID UUID] UUIDString] lowercaseString];
         
         // create a new uuid for this record, as it has to appear to the server to be new
         [[SharkORM new] replaceUUIDPrimaryKey:self withNewUUIDKey:newUUID];
@@ -114,7 +139,7 @@
                         // group has changed, queue a delete for the old record before the commit goes through for the new
                         [SharkSync queueObject:o withChanges:nil withOperation:SharkSyncOperationDelete inHashedGroup:o.recordVisibilityGroup];
                         // generate the new UUID
-                        NSString* newUUID = [[NSUUID UUID] UUIDString];
+                        NSString* newUUID = [[[NSUUID UUID] UUIDString] lowercaseString];
                         // create a new uuid for this record, as it has to appear to the server to be new
                         [[SharkORM new] replaceUUIDPrimaryKey:o withNewUUIDKey:newUUID];
                         o.recordVisibilityGroup = group;
@@ -133,7 +158,7 @@
         }
         
         for (SRKRelationship* r in [SharkORM entityRelationships]) {
-            if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
+            if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == 1) {
                 
                 /* this is a link field that needs to be updated */
                 
@@ -173,8 +198,11 @@
 
 - (BOOL)__removeRaw {
     
+    id cachedPK = [self Id];
     if ([super __removeRaw]) {
+        [self setId:cachedPK];
         [SharkSync queueObject:self withChanges:nil withOperation:SharkSyncOperationDelete inHashedGroup:[SharkSync getEffectiveRecordGroup]];
+        [self setId:nil];
         return YES;
     }
     
@@ -186,6 +214,35 @@
     
     return [super __commitRawWithObjectChain:[SRKEntityChain new]];
     
+}
+
++(SRKSyncObject*)objectFromClass:(NSString*)cls withPrimaryKey:(NSString*)pk {
+    if (!NSClassFromString(cls)) {
+        if (!NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:cls])) {
+            return nil;
+        }
+    }
+    Class cl = [[NSClassFromString(cls) new] objectWithPrimaryKeyValue:pk];
+    if (!cl) {
+        cl = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:cls]);
+    }
+    return [cl objectWithPrimaryKeyValue:pk];
+}
+
++ (SRKSyncObject *)objectFromClass:(NSString *)cls {
+    Class srkClass = NSClassFromString(cls);
+    if (!srkClass) {
+        srkClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:cls]);
+    }
+    return [srkClass new];
+}
+
+- (void)setRecordVisibilityGroup:(NSString *)group {
+    self.recordVisibilityGroup = group;
+}
+
+- (NSString*)getRecordGroup {
+    return self.recordVisibilityGroup;
 }
 
 - (BOOL)__removeRawNoSync {

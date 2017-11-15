@@ -25,11 +25,16 @@
 #define SRKSyncObject_Private_h
 
 #import "SRKEntityChain.h"
+#import "SRKGlobals.h"
 
 @interface SRKSyncObject ()
 
 -(BOOL)__removeRawNoSync;
 -(BOOL)__commitRawWithObjectChainNoSync:(SRKEntityChain *)chain;
++(id)objectFromClass:(NSString*)cls withPrimaryKey:(NSString*)pk;
++(id)objectFromClass:(NSString*)cls;
+-(void)setRecordVisibilityGroup:(NSString*)group;
+-(NSString*)getRecordGroup;
 
 @end
 
