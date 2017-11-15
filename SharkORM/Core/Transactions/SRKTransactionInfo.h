@@ -21,7 +21,7 @@
 //    SOFTWARE.
 
 #import <Foundation/Foundation.h>
-#import "SharkORM.h"
+#import "../SharkORM.h"
 
 @interface SRKTransactionInfo : NSObject
 

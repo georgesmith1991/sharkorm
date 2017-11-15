@@ -24,8 +24,9 @@
 #ifndef SRKSyncObject_Private_h
 #define SRKSyncObject_Private_h
 
-#import "SRKEntityChain.h"
-#import "SRKGlobals.h"
+#import "../Core/SharkORM.h"
+#import "../Core/PersistableObjects/SRKEntityChain.h"
+#import "../Core/SRKGlobals.h"
 
 @interface SRKSyncObject ()
 

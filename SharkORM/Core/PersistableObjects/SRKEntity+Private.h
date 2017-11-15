@@ -23,8 +23,8 @@
 #ifndef SRKObject_Private_h
 #define SRKObject_Private_h
 
-#import "SharkORM.h"
-#import "SRKTransactionInfo.h"
+#import "../SharkORM.h"
+#import "../Transactions/SRKTransactionInfo.h"
 
 @class SRKEntity;
 @class SRKEntityChain;
