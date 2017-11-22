@@ -167,6 +167,12 @@ typedef enum : int {
 
 @end
 
+typedef void(^SRKConfigurationBlock)(void);
+@interface SRKConfiguration : NSObject {
+}
+@property (copy) SRKConfigurationBlock startupBlock;
+@end
+
 /**
  * SharkORM class, always accessed through class methods, there is only ever a single instance of the database engine.
  */
@@ -184,6 +190,13 @@ typedef void(^SRKGlobalEventCallback)(SRKEntity* entity);
  * @return void
  */
 +(void)setDelegate:(id<SRKDelegate>)aDelegate;
+/**
+ * Sets the SRKConfigurationBlock object for the ORM, allowing the ORM to startup across multiple threads and block entity access until the initial setup has been completed.
+ *
+ * @param SRKConfigurationBlock, this usually contains the "setDelegate" and "openDatabase" instructions.
+ * @return SRKConfiguration*, used to allow the startup of Swift/Storyboard apps that have a lifecycle that starts in advance of the AppDelegate methods
+ */
++(SRKConfiguration*)setStartupConfiguration:(SRKConfigurationBlock)configBlock;
 /**
  * Used to pre-create and update any persistable classes, SharkORM by default, will only create or update the schema with objects when they are first referenced.  If there is a requirement to ensure that a collection of classes are created before they are used anywhere then you can use this method.  This is not required in most scenarios.
  *

@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+//import SharkPrivate
 
 class BaseSwiftTest : XCTestCase, SRKDelegate {
     

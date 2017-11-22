@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		3AB538E21FBF1EAD002E6E28 /* SharkUniversal */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3AB538E31FBF1EAD002E6E28 /* Build configuration list for PBXAggregateTarget "SharkUniversal" */;
+			buildPhases = (
+				3AB538E61FBF1ED1002E6E28 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = SharkUniversal;
+			productName = SharkUniversal;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		3A1C0D281FA07B300014CBC3 /* SRKSyncOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D091FA07B2E0014CBC3 /* SRKSyncOptions.m */; };
 		3A1C0D291FA07B300014CBC3 /* SRKDeferredChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */; };
@@ -23,16 +37,14 @@
 		3A1C0D3E1FA07B300014CBC3 /* SharkSync+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */; };
 		3A1C0D411FA07B300014CBC3 /* SRKSyncObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D241FA07B2F0014CBC3 /* SRKSyncObject.m */; };
 		3A1C0D431FA07B300014CBC3 /* SRKDefunctObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */; };
+		3A33ED171FC2E0B800D8CAA5 /* SharkSchemaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A33ED161FC2E0B800D8CAA5 /* SharkSchemaManager.swift */; };
 		3A44877E1D1E857B00BD9CB5 /* OtherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A44877D1D1E857B00BD9CB5 /* OtherTests.m */; };
 		3A5319D61FB308F6007F49A8 /* SharkSyncChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5319D51FB308F6007F49A8 /* SharkSyncChange.swift */; };
 		3A5319D81FB30A92007F49A8 /* SharkSyncGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5319D71FB30A92007F49A8 /* SharkSyncGroup.swift */; };
 		3A707A741FA129D700ECE39F /* SyncComms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A707A731FA129D700ECE39F /* SyncComms.swift */; };
-		3A847F861FB38AC200F8884C /* BaseSwiftTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A847F851FB38AC200F8884C /* BaseSwiftTest.swift */; };
 		3A91BC021FBCAD6200D1E032 /* SyncRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5319D31FB307BB007F49A8 /* SyncRequest.swift */; };
 		3AC1CA3C1FB05A7C000A8F36 /* SyncNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC1CA3B1FB05A7C000A8F36 /* SyncNetwork.swift */; };
 		3AC1CA401FB0B47B000A8F36 /* Mutex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC1CA3F1FB0B47B000A8F36 /* Mutex.swift */; };
-		3ADA54F31FB371050022E9CD /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADA54F21FB371050022E9CD /* Sync.swift */; };
-		3ADA54F51FB371150022E9CD /* SyncObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADA54F41FB371150022E9CD /* SyncObjects.swift */; };
 		3AE95AFB1FBCA12C0043FB59 /* SRKEncryptedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEA1FBCA12C0043FB59 /* SRKEncryptedObject.m */; };
 		3AE95AFC1FBCA12C0043FB59 /* SRKEntityChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEB1FBCA12C0043FB59 /* SRKEntityChain.m */; };
 		3AE95AFD1FBCA12C0043FB59 /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEC1FBCA12C0043FB59 /* SRKRawResults.m */; };
@@ -160,6 +172,7 @@
 		3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SharkSync+Private.h"; sourceTree = "<group>"; };
 		3A1C0D241FA07B2F0014CBC3 /* SRKSyncObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKSyncObject.m; sourceTree = "<group>"; };
 		3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKDefunctObject.m; sourceTree = "<group>"; };
+		3A33ED161FC2E0B800D8CAA5 /* SharkSchemaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharkSchemaManager.swift; sourceTree = "<group>"; };
 		3A44877C1D1E857B00BD9CB5 /* OtherTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherTests.h; sourceTree = "<group>"; };
 		3A44877D1D1E857B00BD9CB5 /* OtherTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherTests.m; sourceTree = "<group>"; };
 		3A5319D21FB30756007F49A8 /* SRKSyncObject+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SRKSyncObject+Private.h"; path = "SharkORM/Sync/SRKSyncObject+Private.h"; sourceTree = SOURCE_ROOT; };
@@ -320,6 +333,7 @@
 				3A1C0D0C1FA07B2F0014CBC3 /* SharkSync.m */,
 				3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */,
 				3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */,
+				3A707A731FA129D700ECE39F /* SyncComms.swift */,
 				3A1C0D131FA07B2F0014CBC3 /* SRKDeferredChange.m */,
 				3A1C0D0B1FA07B2E0014CBC3 /* SRKDefunctObject.h */,
 				3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */,
@@ -344,7 +358,6 @@
 				3AE95B0C1FBCA1410043FB59 /* SyncInterface.swift */,
 				3A1C0D1B1FA07B2F0014CBC3 /* SRKSyncNodesList.m */,
 				3A1C0D1E1FA07B2F0014CBC3 /* SRKSyncNodesList.h */,
-				3A707A731FA129D700ECE39F /* SyncComms.swift */,
 				3AC1CA3B1FB05A7C000A8F36 /* SyncNetwork.swift */,
 				3AC1CA3F1FB0B47B000A8F36 /* Mutex.swift */,
 				3A5319D31FB307BB007F49A8 /* SyncRequest.swift */,
@@ -600,6 +613,7 @@
 				E0F413951CF632120085166C /* SRKSQLiteHandle.m */,
 				E0F413961CF632120085166C /* SRKUtilities.h */,
 				E0F413971CF632120085166C /* SRKUtilities.m */,
+				3A33ED161FC2E0B800D8CAA5 /* SharkSchemaManager.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -796,6 +810,11 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Adrian Herridge";
 				TargetAttributes = {
+					3AB538E21FBF1EAD002E6E28 = {
+						CreatedOnToolsVersion = 9.1;
+						DevelopmentTeam = 3D9YGMP46N;
+						ProvisioningStyle = Automatic;
+					};
 					E0F413461CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 0900;
@@ -821,6 +840,7 @@
 			targets = (
 				E0F413461CF6312A0085166C /* SharkORM */,
 				E0F413501CF6312A0085166C /* SharkORMTests */,
+				3AB538E21FBF1EAD002E6E28 /* SharkUniversal */,
 			);
 		};
 /* End PBXProject section */
@@ -845,6 +865,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		3AB538E61FBF1ED1002E6E28 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Merge Script\n\n# 1\n# Set bash script to exit immediately if any commands fail.\nset -e\n\n# 2\n# Setup some constants for use later on.\nFRAMEWORK_NAME=\"SharkORM\"\n\n# 3\n# If remnants from a previous build exist, delete them.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi\n\n# 4\n# Build the framework for device and for simulator (using\n# all needed architectures).\nxcodebuild -target \"${FRAMEWORK_NAME}\" -configuration Release -arch arm64 -arch armv7 -arch armv7s only_active_arch=no defines_module=yes -sdk \"iphoneos\"\nxcodebuild -target \"${FRAMEWORK_NAME}\" -configuration Release -arch x86_64 -arch i386 only_active_arch=no defines_module=yes -sdk \"iphonesimulator\"\n\n# 5\n# Remove .framework file if exists on Desktop from previous run.\nif [ -d \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\" ]; then\nrm -rf \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\nfi\n\n# 6\n# Copy the device version of framework to Desktop.\ncp -r \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\n\n# 7\n# Replace the framework executable within the framework with\n# a new version created by merging the device and simulator\n# frameworks' executables with lipo.\nlipo -create -output \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\"\n\n# 8\n# Copy the Swift module mappings for the simulator into the\n# framework.  The device mappings already exist from step 6.\ncp -r \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule/\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule\"\n\n# 9\n# Delete the most recent build.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E0F413421CF6312A0085166C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -864,6 +900,7 @@
 				E0F413A41CF632120085166C /* SRKEvent.m in Sources */,
 				E0F413B01CF632120085166C /* FTSRegistry.m in Sources */,
 				E0F413AD1CF632120085166C /* SRKEventRegistryObject.m in Sources */,
+				3A33ED171FC2E0B800D8CAA5 /* SharkSchemaManager.swift in Sources */,
 				3A1C0D301FA07B300014CBC3 /* SRKSyncRegisteredClass.m in Sources */,
 				3AE95AFB1FBCA12C0043FB59 /* SRKEncryptedObject.m in Sources */,
 				3AE95B001FBCA12C0043FB59 /* SRKResultSet.m in Sources */,
@@ -914,7 +951,6 @@
 				3A44877E1D1E857B00BD9CB5 /* OtherTests.m in Sources */,
 				E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */,
 				E00320481CFA58FF00240C44 /* MostObjectTypes.m in Sources */,
-				3ADA54F31FB371050022E9CD /* Sync.swift in Sources */,
 				E092CB081D00DBE800C6C8CD /* Performance.m in Sources */,
 				E0E3ACD51D11B8B5006803F7 /* Location.m in Sources */,
 				E00320491CFA58FF00240C44 /* Person.m in Sources */,
@@ -927,13 +963,11 @@
 				E0215CA81D195C2700876ABC /* Subclass.m in Sources */,
 				E040B5BF1D1479E900FCC830 /* Examples.m in Sources */,
 				E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */,
-				3ADA54F51FB371150022E9CD /* SyncObjects.swift in Sources */,
 				E0E3ACD81D11BC6A006803F7 /* Multithreaded.m in Sources */,
 				E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */,
 				E00320631CFB8F0B00240C44 /* Persistence.m in Sources */,
 				E003204C1CFA58FF00240C44 /* SwiftObjects.swift in Sources */,
 				E00320471CFA58FF00240C44 /* Department.m in Sources */,
-				3A847F861FB38AC200F8884C /* BaseSwiftTest.swift in Sources */,
 				E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */,
 				E0C450C61D10865A003FA21D /* Query.m in Sources */,
 				E040B5C31D14970D00FCC830 /* Joins.m in Sources */,
@@ -951,6 +985,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		3AB538E41FBF1EAD002E6E28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3D9YGMP46N;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3AB538E51FBF1EAD002E6E28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3D9YGMP46N;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E0F413591CF6312A0085166C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1077,6 +1129,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1085,7 +1138,7 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64 i386";
 			};
 			name = Debug;
 		};
@@ -1113,7 +1166,7 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64 i386";
 			};
 			name = Release;
 		};
@@ -1153,6 +1206,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3AB538E31FBF1EAD002E6E28 /* Build configuration list for PBXAggregateTarget "SharkUniversal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AB538E41FBF1EAD002E6E28 /* Debug */,
+				3AB538E51FBF1EAD002E6E28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E0F413411CF6312A0085166C /* Build configuration list for PBXProject "SharkORM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

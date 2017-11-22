@@ -58,7 +58,7 @@
 - (void)setFieldRaw:(NSString*)fieldName value:(NSObject*)value;
 - (void)setField:(NSString*)fieldName value:(NSObject*)value;
 - (void)setJoinedField:(NSString*)fieldName value:(NSObject*)value;
-- (NSArray*)fieldNames;
+- (NSArray<NSString*>*)fieldNames;
 - (NSArray*)modifiedFieldNames;
 - (NSDictionary*)entityDictionary;
 - (NSMutableDictionary*)entityContentsAsObjects;
@@ -86,8 +86,8 @@
 - (void)reloadRelationships;
 
 /* schema */
-+(int)getEntityPropertyType:(NSString*)propertyName;
-+(int)getEntityPropertyType:(NSString*)propertyName forClass:(Class)entityClass;
++ (void)inspectAndPopulateSchema:(NSString*)entity;
++ (NSInteger)getEntityPropertyTypeFor:(NSString*)entity property:(NSString*)property;
 
 @end
 

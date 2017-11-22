@@ -26,6 +26,7 @@
 #import "SRKEntity+Private.h"
 #import "SharkORM+Private.h"
 #import "SRKGlobals.h"
+#import <SharkORM/SharkORM-Swift.h>
 
 @implementation SRKUtilities
 
@@ -47,21 +48,18 @@
             value = [NSNumber numberWithLongLong:sqlite3_column_int64(stmt, i)];
             
             /* the result could be a date so check the class  column type */
-            const char* tableName = sqlite3_column_table_name(stmt, i);
+            NSString* tableName = [NSString stringWithUTF8String:sqlite3_column_table_name(stmt, i)];
             if (tableName) {
-                NSDictionary* schema = [[SharkORM tableSchemas] objectForKey:[NSString stringWithUTF8String:tableName]];
-                if (schema) {
-                    
-                    NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
-                    
-                    SRKUtilities* dba = [SRKUtilities new];
-                    columnName = [dba originalColumnName:columnName];
-                    
-                    NSString* type = [schema objectForKey:columnName];
-                    if (type) {
-                        if ([type isEqualToString:@"DATETIME"]) {
-                            value = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[((NSNumber*)value) doubleValue]];
-                        }
+                
+                NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
+                
+                SRKUtilities* dba = [SRKUtilities new];
+                columnName = [dba originalColumnName:columnName];
+                
+                NSInteger type = [SharkSchemaManager.shared schemaPropertyTypeWithEntity:tableName property:columnName];
+                if (type) {
+                    if (type == SRK_PROPERTY_TYPE_DATE) {
+                        value = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[((NSNumber*)value) doubleValue]];
                     }
                 }
             }
@@ -73,20 +71,16 @@
             value = [NSNumber numberWithDouble:sqlite3_column_double(stmt, i)];
             
             /* the result could be a date so check the column type */
-            const char* tableName = sqlite3_column_table_name(stmt, i);
+            NSString* tableName = [NSString stringWithUTF8String:sqlite3_column_table_name(stmt, i)];
             if (tableName) {
-                NSDictionary* schema = [[SharkORM tableSchemas] objectForKey:[NSString stringWithUTF8String:tableName]];
-                if (schema) {
-                    
-                    NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
-                    SRKUtilities* dba = [SRKUtilities new];
-                    columnName = [dba originalColumnName:columnName];
-                    
-                    NSString* type = [schema objectForKey:columnName];
-                    if (type) {
-                        if ([type isEqualToString:@"DATETIME"]) {
-                            value = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[((NSNumber*)value) doubleValue]];
-                        }
+                NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
+                SRKUtilities* dba = [SRKUtilities new];
+                columnName = [dba originalColumnName:columnName];
+                
+                NSInteger type = [SharkSchemaManager.shared schemaPropertyTypeWithEntity:tableName property:columnName];
+                if (type) {
+                    if (type == SRK_PROPERTY_TYPE_DATE) {
+                        value = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[((NSNumber*)value) doubleValue]];
                     }
                 }
             }
@@ -112,7 +106,7 @@
                 entityClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:[NSString stringWithUTF8String:tableName]]);
             }
             if (entityClass) {
-                switch ([SRKEntity getEntityPropertyType:columnName forClass:entityClass]) {
+                switch ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[NSString stringWithUTF8String:tableName] property:columnName]) {
                     case SRK_PROPERTY_TYPE_STRING:
                         // do nothing, because value is already a string.
                         break;
@@ -363,14 +357,14 @@
     [key replaceCharactersInRange:NSMakeRange(0, 1)
                        withString:[firstChar lowercaseString]];
     
-    if ([SharkORM column:key existsInTable:[object.class description]]) {
+    if ([SharkSchemaManager.shared schemaPropertyExistsWithEntity:[object.class description] property:key]) {
         return key;
     }
     
     [key replaceCharactersInRange:NSMakeRange(0, 1)
                        withString:[firstChar uppercaseString]];
     
-    if ([SharkORM column:key existsInTable:[object.class description]]) {
+    if ([SharkSchemaManager.shared schemaPropertyExistsWithEntity:[object.class description] property:key]) {
         return key;
     }
     

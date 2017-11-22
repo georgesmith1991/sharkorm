@@ -39,6 +39,7 @@
 #import "SRKGlobals.h"
 #import "SRKTransaction+Private.h"
 #import "SRKCommitOptions+Private.h"
+#import <SharkORM/SharkORM-Swift.h>
 
 @interface SRKEntity()
 
@@ -53,9 +54,8 @@
 @synthesize exists, embeddedEntities, context, isMarkedForDeletion, dirty, commitOptions;
 @dynamic Id,joinedResults;
 
-static NSMutableDictionary* refactoredEntities;
+static NSMutableDictionary* inspectedEntities;
 static NSMutableDictionary* entitiesThatNeedRefactoring;
-static NSMutableDictionary* cachedPropertyListForAllClasses;
 static int obCount=0;
 
 
@@ -281,161 +281,130 @@ static int obCount=0;
     return nil;
 }
 
-+(void)updateCache:(NSMutableDictionary*)list property:(NSString*)propName encoding:(const char*)encoding matches:(NSString*)matches storageType:(int)storageType {
-    
++(void)updateEntity:(NSString*)entity property:(NSString*)propName encoding:(const char*)encoding matches:(NSString*)matches entityPropertyType:(int)entityPropertyType {
     if ([[NSString stringWithUTF8String:encoding] isEqualToString:matches]) {
-        [list setObject:@(storageType) forKey:propName];
+        [SharkSchemaManager.shared schemaSetWithEntity:entity property:propName type:entityPropertyType];
+    }
+}
+
++ (NSInteger)getEntityPropertyTypeFor:(NSString *)entity property:(NSString *)property {
+    
+    NSInteger propertyType = [SharkSchemaManager.shared schemaPropertyTypeWithEntity:entity property:property];
+    if (propertyType) {
+        return propertyType;
+    } else {
+        return SRK_PROPERTY_TYPE_UNDEFINED;
     }
     
 }
 
-+ (int)getEntityPropertyType:(NSString *)propertyName forClass:(Class)entityClass {
-    return [entityClass getEntityPropertyType:propertyName];
-}
-
-+(int)getEntityPropertyType:(NSString*)propertyName {
++ (void)inspectAndPopulateSchema:(NSString*)entity {
     
     /* now look within the entity to get its property types */
     
-    if (!cachedPropertyListForAllClasses) {
-        cachedPropertyListForAllClasses = [NSMutableDictionary new];
-    }
-    
-    
     NSString* clName = [[self class] description];
-    NSMutableDictionary* cachedPropertyList = [cachedPropertyListForAllClasses objectForKey:clName];
     
-    if (!cachedPropertyList) {
+    /* because we no longer inspect the superclass since 2.0.5+ and the introduction of inheritance,
+     we need to set the default PK as NUMBER until it is overwritten if different */
+    objc_property_t primaryKeyProperty = class_getProperty([self class], SRK_DEFAULT_PRIMARY_KEY_NAME.UTF8String);
+    NSString* primaryKeyPropertyDeclarationType = [NSString stringWithUTF8String:property_getAttributes(primaryKeyProperty)];
+    
+    [SharkSchemaManager.shared schemaSetWithEntity:entity pk:SRK_DEFAULT_PRIMARY_KEY_NAME];
+    [SharkSchemaManager.shared schemaSetWithEntity:entity property:SRK_DEFAULT_PRIMARY_KEY_NAME type:[primaryKeyPropertyDeclarationType rangeOfString:@"NSString"].location == NSNotFound ?   SRK_PROPERTY_TYPE_NUMBER : SRK_PROPERTY_TYPE_STRING];
+    [SharkSchemaManager.shared schemaSetWithEntity:entity database:[self storageDatabaseForClass] ? [self storageDatabaseForClass] : [[SRKGlobals sharedObject] defaultDatabaseName]];
+    
+    Class c = [self class];
+    
+    /* this class needs to be tested by the data layer to see if it needs to make any changes */
+    unsigned int outCount;
+    objc_property_t *properties = class_copyPropertyList(c, &outCount);
+    
+    NSMutableArray* ignoredProperties = [NSMutableArray arrayWithArray:[[self class] ignoredProperties]];
+    [ignoredProperties addObject:SRK_DEFAULT_PRIMARY_KEY_NAME];
+    
+    for (int i = 0; i < outCount; i++) {
         
-        cachedPropertyList = [NSMutableDictionary new];
+        objc_property_t property = properties[i];
         
-        /* because we no longer inspect the superclass since 2.0.5+ and the introduction of inheritance,
-         we need to set the default PK as NUMBER until it is overwritten if different */
-        objc_property_t primaryKeyProperty = class_getProperty([self class], SRK_DEFAULT_PRIMARY_KEY_NAME.UTF8String);
-        NSString* primaryKeyPropertyDeclarationType = [NSString stringWithUTF8String:property_getAttributes(primaryKeyProperty)];
-        [cachedPropertyList setObject:@([primaryKeyPropertyDeclarationType rangeOfString:@"NSString"].location == NSNotFound ?   SRK_PROPERTY_TYPE_NUMBER : SRK_PROPERTY_TYPE_STRING) forKey:SRK_DEFAULT_PRIMARY_KEY_NAME];
+        const char* name = property_getName(property);
+        NSString* propName = [NSString stringWithUTF8String:name];
+        NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+        NSString* declarationType = [NSString stringWithUTF8String:property_getAttributes(property)];
         
-        Class c = [self class];
+        /*
+         *  We can no longer detect @dynamic variables to determine what needs to be persisted , as even 'dynamic var'
+         *      properties in Swift identify their signature as synthesized.
+         *
+         *  As of v2.0.6-> a call to +(NSArray*)ignoredProperties on SRKObjects is called to determine what not to persist.
+         *
+         */
         
-        /* this class needs to be tested by the data layer to see if it needs to make any changes */
-        unsigned int outCount;
-        objc_property_t *properties = class_copyPropertyList(c, &outCount);
-        
-        NSMutableArray* ignoredProperties = [NSMutableArray arrayWithArray:[[self class] ignoredProperties]];
-        [ignoredProperties addObject:SRK_DEFAULT_PRIMARY_KEY_NAME];
-        
-        for (int i = 0; i < outCount; i++) {
+        if (!ignoredProperties || ![ignoredProperties containsObject:propName]) {
             
-            objc_property_t property = properties[i];
+            if ([attributes rangeOfString:@","].location != NSNotFound) {
+                attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
+            }
             
-            const char* name = property_getName(property);
-            NSString* propName = [NSString stringWithUTF8String:name];
-            NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
-            NSString* declarationType = [NSString stringWithUTF8String:property_getAttributes(property)];
+            if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
+                attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
+            }
             
-            /*
-             *  We can no longer detect @dynamic variables to determine what needs to be persisted , as even 'dynamic var'
-             *      properties in Swift identify their signature as synthesized.
-             *
-             *  As of v2.0.6-> a call to +(NSArray*)ignoredProperties on SRKObjects is called to determine what not to persist.
-             *
-             */
+            const char* typeEncoding = [attributes UTF8String];
             
-            if (!ignoredProperties || ![ignoredProperties containsObject:propName]) {
-                
-                if ([attributes rangeOfString:@","].location != NSNotFound) {
-                    attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
-                }
-                
-                if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
-                    attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
-                }
-                
-                const char* typeEncoding = [attributes UTF8String];
-                
-                BOOL swiftStaticallyDispatchedVarFound = NO;
-                
-                /* test for swiftness, and then check to see if the var is dynamic or not, the only way we can */
-                if ([self isSwiftClass]) {
-                    
-                    /*
-                     * Awaiting the ability to see if a swift property is dynamic and therefore persistable
-                     */
-                    
-                    //swiftSynthesizedVarFound = YES;
-                    //[cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_UNDEFINED) forKey:propName];
-                    
-                }
-                
-                if (!swiftStaticallyDispatchedVarFound) {
-                    
-                    if ([declarationType rangeOfString:[NSString stringWithFormat:@"V%s", name]].location != NSNotFound) {
-                        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_UNDEFINED) forKey:propName];
-                    }
-                    
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSString\"" storageType:SRK_PROPERTY_TYPE_STRING];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSNumber\"" storageType:SRK_PROPERTY_TYPE_NUMBER];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSDate\"" storageType:SRK_PROPERTY_TYPE_DATE];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"UIImage\"" storageType:SRK_PROPERTY_TYPE_IMAGE];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSImage\"" storageType:SRK_PROPERTY_TYPE_IMAGE];
-                    
-                    /* we need to check that this array is *NOT* involved in a relationship */
-                    if (![c relationshipForProperty:[NSString stringWithUTF8String:name]]) {
-                        [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSArray\"" storageType:SRK_PROPERTY_TYPE_ARRAY];
-                    } else {
-                        [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSArray\"" storageType:SRK_PROPERTY_TYPE_ENTITYOBJECTARRAY];
-                    }
-                    
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSDictionary\"" storageType:SRK_PROPERTY_TYPE_DICTIONARY];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSData\"" storageType:SRK_PROPERTY_TYPE_DATA];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableData\"" storageType:SRK_PROPERTY_TYPE_MUTABLEDATA];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableArray\"" storageType:SRK_PROPERTY_TYPE_MUTABLEARAY];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableDictionary\"" storageType:SRK_PROPERTY_TYPE_MUTABLEDIC];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSURL\"" storageType:SRK_PROPERTY_TYPE_URL];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSObject\"" storageType:SRK_PROPERTY_TYPE_NSOBJECT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@" storageType:SRK_PROPERTY_TYPE_NSOBJECT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Ti" storageType:SRK_PROPERTY_TYPE_INT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TB" storageType:SRK_PROPERTY_TYPE_BOOL];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tl" storageType:SRK_PROPERTY_TYPE_LONG];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tf" storageType:SRK_PROPERTY_TYPE_FLOAT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tc" storageType:SRK_PROPERTY_TYPE_BOOL];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Ts" storageType:SRK_PROPERTY_TYPE_SHORT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tq" storageType:SRK_PROPERTY_TYPE_LONGLONG];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TC" storageType:SRK_PROPERTY_TYPE_UCHAR];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TI" storageType:SRK_PROPERTY_TYPE_UINT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TS" storageType:SRK_PROPERTY_TYPE_USHORT];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TL" storageType:SRK_PROPERTY_TYPE_ULONG];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TQ" storageType:SRK_PROPERTY_TYPE_ULONGLONG];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Td" storageType:SRK_PROPERTY_TYPE_DOUBLE];
-                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"T*" storageType:SRK_PROPERTY_TYPE_CHARPTR];
-                    
-                    NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-                    Class testClass = NSClassFromString(className);
-                    if (!testClass) {
-                        testClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
-                    }
-                    if ([testClass isSubclassOfClass:[SRKEntity class]]) {
-                        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_ENTITYOBJECT) forKey:propName];
-                    }
-                    
-                }
-                
+            if ([declarationType rangeOfString:[NSString stringWithFormat:@"V%s", name]].location != NSNotFound) {
+                [SharkSchemaManager.shared schemaSetWithEntity:entity property:propName type:SRK_PROPERTY_TYPE_UNDEFINED];
+            }
+            
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSString\"" entityPropertyType:SRK_PROPERTY_TYPE_STRING];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSNumber\"" entityPropertyType:SRK_PROPERTY_TYPE_NUMBER];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSDate\"" entityPropertyType:SRK_PROPERTY_TYPE_DATE];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"UIImage\"" entityPropertyType:SRK_PROPERTY_TYPE_IMAGE];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSImage\"" entityPropertyType:SRK_PROPERTY_TYPE_IMAGE];
+            
+            /* we need to check that this array is *NOT* involved in a relationship */
+            if (![c relationshipForProperty:[NSString stringWithUTF8String:name]]) {
+                [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSArray\"" entityPropertyType:SRK_PROPERTY_TYPE_ARRAY];
+            } else {
+                [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSArray\"" entityPropertyType:SRK_PROPERTY_TYPE_ENTITYOBJECTARRAY];
+            }
+            
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSDictionary\"" entityPropertyType:SRK_PROPERTY_TYPE_DICTIONARY];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSData\"" entityPropertyType:SRK_PROPERTY_TYPE_DATA];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSMutableData\"" entityPropertyType:SRK_PROPERTY_TYPE_MUTABLEDATA];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSMutableArray\"" entityPropertyType:SRK_PROPERTY_TYPE_MUTABLEARAY];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSMutableDictionary\"" entityPropertyType:SRK_PROPERTY_TYPE_MUTABLEDIC];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSURL\"" entityPropertyType:SRK_PROPERTY_TYPE_URL];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSObject\"" entityPropertyType:SRK_PROPERTY_TYPE_NSOBJECT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@" entityPropertyType:SRK_PROPERTY_TYPE_NSOBJECT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Ti" entityPropertyType:SRK_PROPERTY_TYPE_INT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"TB" entityPropertyType:SRK_PROPERTY_TYPE_BOOL];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Tl" entityPropertyType:SRK_PROPERTY_TYPE_LONG];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Tf" entityPropertyType:SRK_PROPERTY_TYPE_FLOAT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Tc" entityPropertyType:SRK_PROPERTY_TYPE_BOOL];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Ts" entityPropertyType:SRK_PROPERTY_TYPE_SHORT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Tq" entityPropertyType:SRK_PROPERTY_TYPE_LONGLONG];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"TC" entityPropertyType:SRK_PROPERTY_TYPE_UCHAR];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"TI" entityPropertyType:SRK_PROPERTY_TYPE_UINT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"TS" entityPropertyType:SRK_PROPERTY_TYPE_USHORT];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"TL" entityPropertyType:SRK_PROPERTY_TYPE_ULONG];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"TQ" entityPropertyType:SRK_PROPERTY_TYPE_ULONGLONG];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"Td" entityPropertyType:SRK_PROPERTY_TYPE_DOUBLE];
+            [self updateEntity:entity property:propName encoding:typeEncoding matches:@"T*" entityPropertyType:SRK_PROPERTY_TYPE_CHARPTR];
+            
+            NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+            Class testClass = NSClassFromString(className);
+            if (!testClass) {
+                testClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
+            }
+            if ([testClass isSubclassOfClass:[SRKEntity class]]) {
+                [SharkSchemaManager.shared schemaSetWithEntity:entity property:propName type:SRK_PROPERTY_TYPE_ENTITYOBJECT];
             }
             
         }
         
-        free(properties);
-        
-        [cachedPropertyListForAllClasses setObject:cachedPropertyList forKey:[[self class] description]];
-        
     }
     
-    NSNumber* propertyType = (NSNumber*)[cachedPropertyList objectForKey:propertyName];
-    if (propertyType) {
-        return [propertyType intValue];
-    } else {
-        return SRK_PROPERTY_TYPE_UNDEFINED;
-    }
+    free(properties);
     
 }
 
@@ -539,7 +508,6 @@ static int obCount=0;
     
 }
 
-
 /* below are the two methods that we need to call whenever a get or set is called on the fields */
 
 - (void)setValue:(id)value forKey:(NSString *)key {
@@ -548,7 +516,7 @@ static int obCount=0;
         /* we now need to convert any inbound object to the correct type as it may be a scalar target */
         if ([value isKindOfClass:[NSNumber class]]) {
             /* this is a number, now work out what the target type is */
-            switch ([self.class getEntityPropertyType:key]) {
+            switch ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:key]) {
                 case SRK_PROPERTY_TYPE_INT:
                     setPropertyIntIMP(self, [[SRKUtilities new] generateSetSelectorForPropertyName:key], ((NSNumber*)value).intValue);
                     break;
@@ -625,9 +593,9 @@ static id propertyIMP(SRKEntity* self, SEL _cmd) {
             if ([columnValue isKindOfClass:[NSData class]]) {
                 
                 /* check to see if the original column is an NSData column, if not this object needs re-inflating */
-                if([self.class getEntityPropertyType:columnName] != SRK_PROPERTY_TYPE_DATA && [self.class getEntityPropertyType:columnName] != SRK_PROPERTY_TYPE_MUTABLEDATA) {
+                if([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] != SRK_PROPERTY_TYPE_DATA && [SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] != SRK_PROPERTY_TYPE_MUTABLEDATA) {
                     
-                    if ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_IMAGE) {
+                    if ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_IMAGE) {
                         
                         /* store the object so this method is only called the once */
                         [self setFieldRaw:columnName value:columnValue];
@@ -656,7 +624,7 @@ static id propertyIMP(SRKEntity* self, SEL _cmd) {
                         
                     }
                     
-                } else if ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_MUTABLEDATA) {
+                } else if ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_MUTABLEDATA) {
                     
                     columnValue = [NSMutableData dataWithData:((NSData*)columnValue)];
                     
@@ -761,7 +729,7 @@ static char propertyCharIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_CHAR)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_CHAR)) {
         return [(NSNumber*)o charValue];
     } else {
         return 0;
@@ -775,7 +743,7 @@ static int propertyIntIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_INT)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_INT)) {
         return [(NSNumber*)o intValue];
     } else {
         return 0;
@@ -789,7 +757,7 @@ static short propertyShortIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_SHORT)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_SHORT)) {
         return [(NSNumber*)o shortValue];
     } else {
         return 0;
@@ -803,7 +771,7 @@ static long propertyLongIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_LONG)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_LONG)) {
         return [(NSNumber*)o longValue];
     } else {
         return 0;
@@ -817,7 +785,7 @@ static long long propertyLongLongIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_LONGLONG)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_LONGLONG)) {
         return [(NSNumber*)o longLongValue];
     } else {
         return 0;
@@ -831,7 +799,7 @@ static unsigned char propertyUCharIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_UCHAR)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_UCHAR)) {
         return [(NSNumber*)o unsignedCharValue];
     } else {
         return 0;
@@ -845,7 +813,7 @@ static unsigned int propertyUIntIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_UINT)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_UINT)) {
         return [(NSNumber*)o unsignedIntValue];
     } else {
         return 0;
@@ -859,7 +827,7 @@ static unsigned short propertyUShortIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_USHORT)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_USHORT)) {
         return [(NSNumber*)o unsignedShortValue];
     } else {
         return 0;
@@ -873,7 +841,7 @@ static unsigned long propertyULongIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_ULONG)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_ULONG)) {
         return [(NSNumber*)o unsignedLongValue];
     } else {
         return 0;
@@ -889,7 +857,7 @@ static float propertyFloatIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_FLOAT)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_FLOAT)) {
         return [(NSNumber*)o floatValue];
     } else {
         return 0;
@@ -904,7 +872,7 @@ static unsigned long long propertyULongLongIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_ULONGLONG)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_ULONGLONG)) {
         return [(NSNumber*)o unsignedLongLongValue];
     } else {
         return 0;
@@ -918,7 +886,7 @@ static double propertyDoubleIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_DOUBLE)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_DOUBLE)) {
         return [(NSNumber*)o doubleValue];
     } else {
         return 0;
@@ -932,7 +900,7 @@ static BOOL propertyBoolIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_BOOL)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_BOOL)) {
         return [(NSNumber*)o boolValue];
     } else {
         return NO;
@@ -946,7 +914,7 @@ static char* propertyCharPTRIMP(SRKEntity* self, SEL _cmd) {
     
     NSString* columnName = NSStringFromSelector(_cmd);
     
-    if (o && ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_LONG)) {
+    if (o && ([SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:columnName] == SRK_PROPERTY_TYPE_LONG)) {
         return (char*)[(NSString*)o UTF8String];
     } else {
         return nil;
@@ -1012,52 +980,49 @@ static void setPropertyIMP(SRKEntity* self, SEL _cmd, id aValue) {
     }
     
     /* now test to see if this is an asignment to or from a relationship, not a field */
-    for (SRKRelationship *r in [SharkORM entityRelationships]) {
-        if ([[r.sourceClass description] isEqualToString:[[self class] description]]) {
+    for (SRKRelationship *r in [SharkSchemaManager.shared relationshipsWithEntity:[[self class] description]]) {
+        /* now test to see if this is a linked object */
+        if ([r.entityPropertyName isEqualToString:propertyName]) {
             
-            /* now test to see if this is a linked object */
-            if ([r.entityPropertyName isEqualToString:propertyName]) {
-                
-                /* this is a property that is related to another entity */
-                
-                /* we need to pull out the ID of the assigning parameter and insert it into the hidden field */
-                id argument = aValue;
-                
-                if (argument) {
-                    if ([argument isKindOfClass:[SRKEntity class]]) {
-                        
-                        /* store the entity in the cache */
-                        [self.embeddedEntities setObject:argument forKey:propertyName];
-                        
-                        /* if the new entity exists in the table then update the id column */
-                        if (((SRKEntity*)argument).exists) {
-                            [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKEntity*)argument).Id];
-                        }
-                        
-                    } else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
-                        
-                        /* we need to stuff this straight into the cache */
-                        [self.embeddedEntities setObject:argument forKey:propertyName];
-                        
+            /* this is a property that is related to another entity */
+            
+            /* we need to pull out the ID of the assigning parameter and insert it into the hidden field */
+            id argument = aValue;
+            
+            if (argument) {
+                if ([argument isKindOfClass:[SRKEntity class]]) {
+                    
+                    /* store the entity in the cache */
+                    [self.embeddedEntities setObject:argument forKey:propertyName];
+                    
+                    /* if the new entity exists in the table then update the id column */
+                    if (((SRKEntity*)argument).exists) {
+                        [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKEntity*)argument).Id];
                     }
-                } else {
                     
-                    /* !argument */
+                } else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
                     
-                    [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:[NSNull null]];
-                    
-                    /* we need to force the embedded item to be a lazy loader */
-                    SRKLazyLoader* ll = [SRKLazyLoader new];
-                    ll.parentEntity = self;
-                    ll.relationship = r;
-                    
-                    [self.embeddedEntities setObject:ll forKey:propertyName];
+                    /* we need to stuff this straight into the cache */
+                    [self.embeddedEntities setObject:argument forKey:propertyName];
                     
                 }
+            } else {
                 
+                /* !argument */
                 
+                [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:[NSNull null]];
+                
+                /* we need to force the embedded item to be a lazy loader */
+                SRKLazyLoader* ll = [SRKLazyLoader new];
+                ll.parentEntity = self;
+                ll.relationship = r;
+                
+                [self.embeddedEntities setObject:ll forKey:propertyName];
                 
             }
+            
+            
+            
         }
     }
     
@@ -1103,57 +1068,54 @@ static void setPropertyEntityIMP(SRKEntity* self, SEL _cmd, id aValue) {
     }
     
     /* now test to see if this is an asignment to or from a relationship, not a field */
-    for (SRKRelationship *r in [SharkORM entityRelationships]) {
-        if ([[r.sourceClass description] isEqualToString:[[self class] description]]) {
+    for (SRKRelationship *r in [SharkSchemaManager.shared relationshipsWithEntity:[[self class] description]]) {
+        /* now test to see if this is a linked object */
+        if ([r.entityPropertyName isEqualToString:propertyName]) {
             
-            /* now test to see if this is a linked object */
-            if ([r.entityPropertyName isEqualToString:propertyName]) {
-                
-                /* this is a property that is related to another entity */
-                
-                /* we need to pull out the ID of the assigning parameter and insert it into the hidden field */
-                id argument = aValue;
-                
-                if (argument) {
-                    if ([argument isKindOfClass:[SRKEntity class]]) {
-                        
-                        /* store the entity in the cache */
-                        [self.embeddedEntities setObject:argument forKey:propertyName];
-                        
-                        /* if the new entity exists in the table then update the id column */
-                        if (((SRKEntity*)argument).exists) {
-                            [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKEntity*)argument).Id];
-                        } else {
-                            /* stil flag this object as dirty so we know it has actualy changed, regardless of not having a PK yet */
-                            @synchronized (self.dirtyFields) {
-                                [self.dirtyFields setObject:@(1) forKey:propertyName];
-                            }
+            /* this is a property that is related to another entity */
+            
+            /* we need to pull out the ID of the assigning parameter and insert it into the hidden field */
+            id argument = aValue;
+            
+            if (argument) {
+                if ([argument isKindOfClass:[SRKEntity class]]) {
+                    
+                    /* store the entity in the cache */
+                    [self.embeddedEntities setObject:argument forKey:propertyName];
+                    
+                    /* if the new entity exists in the table then update the id column */
+                    if (((SRKEntity*)argument).exists) {
+                        [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKEntity*)argument).Id];
+                    } else {
+                        /* stil flag this object as dirty so we know it has actualy changed, regardless of not having a PK yet */
+                        @synchronized (self.dirtyFields) {
+                            [self.dirtyFields setObject:@(1) forKey:propertyName];
                         }
-                        
-                    } else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
-                        
-                        /* we need to stuff this straight into the cache */
-                        [self.embeddedEntities setObject:argument forKey:propertyName];
-                        
                     }
-                } else {
                     
-                    /* !argument */
+                } else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
                     
-                    [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:[NSNull null]];
-                    
-                    /* we need to force the embedded item to be a lazy loader */
-                    SRKLazyLoader* ll = [SRKLazyLoader new];
-                    ll.parentEntity = self;
-                    ll.relationship = r;
-                    
-                    [self.embeddedEntities setObject:ll forKey:propertyName];
+                    /* we need to stuff this straight into the cache */
+                    [self.embeddedEntities setObject:argument forKey:propertyName];
                     
                 }
+            } else {
                 
+                /* !argument */
                 
+                [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:[NSNull null]];
+                
+                /* we need to force the embedded item to be a lazy loader */
+                SRKLazyLoader* ll = [SRKLazyLoader new];
+                ll.parentEntity = self;
+                ll.relationship = r;
+                
+                [self.embeddedEntities setObject:ll forKey:propertyName];
                 
             }
+            
+            
+            
         }
     }
     
@@ -1197,52 +1159,47 @@ static void setPropertyEntityCollectionIMP(SRKEntity* self, SEL _cmd, id aValue)
     }
     
     /* now test to see if this is an asignment to or from a relationship, not a field */
-    for (SRKRelationship *r in [SharkORM entityRelationships]) {
-        if ([[r.sourceClass description] isEqualToString:[[self class] description]]) {
+    for (SRKRelationship *r in [SharkSchemaManager.shared relationshipsWithEntity:[[self class] description]]) {
+        /* now test to see if this is a linked object */
+        if ([r.entityPropertyName isEqualToString:propertyName]) {
             
-            /* now test to see if this is a linked object */
-            if ([r.entityPropertyName isEqualToString:propertyName]) {
-                
-                /* this is a property that is related to another entity */
-                
-                /* we need to pull out the ID of the assigning parameter and insert it into the hidden field */
-                id argument = aValue;
-                
-                if (argument) {
-                    if ([argument isKindOfClass:[SRKEntity class]]) {
-                        
-                        /* store the entity in the cache */
-                        [self.embeddedEntities setObject:argument forKey:propertyName];
-                        
-                        /* if the new entity exists in the table then update the id column */
-                        if (((SRKEntity*)argument).exists) {
-                            [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKEntity*)argument).Id];
-                        }
-                        
-                    } else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
-                        
-                        /* we need to stuff this straight into the cache */
-                        [self.embeddedEntities setObject:argument forKey:propertyName];
-                        
+            /* this is a property that is related to another entity */
+            
+            /* we need to pull out the ID of the assigning parameter and insert it into the hidden field */
+            id argument = aValue;
+            
+            if (argument) {
+                if ([argument isKindOfClass:[SRKEntity class]]) {
+                    
+                    /* store the entity in the cache */
+                    [self.embeddedEntities setObject:argument forKey:propertyName];
+                    
+                    /* if the new entity exists in the table then update the id column */
+                    if (((SRKEntity*)argument).exists) {
+                        [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKEntity*)argument).Id];
                     }
-                } else {
                     
-                    /* !argument */
+                } else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
                     
-                    [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:[NSNull null]];
-                    
-                    /* we need to force the embedded item to be a lazy loader */
-                    SRKLazyLoader* ll = [SRKLazyLoader new];
-                    ll.parentEntity = self;
-                    ll.relationship = r;
-                    
-                    [self.embeddedEntities setObject:ll forKey:propertyName];
+                    /* we need to stuff this straight into the cache */
+                    [self.embeddedEntities setObject:argument forKey:propertyName];
                     
                 }
+            } else {
                 
+                /* !argument */
                 
+                [self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:[NSNull null]];
+                
+                /* we need to force the embedded item to be a lazy loader */
+                SRKLazyLoader* ll = [SRKLazyLoader new];
+                ll.parentEntity = self;
+                ll.relationship = r;
+                
+                [self.embeddedEntities setObject:ll forKey:propertyName];
                 
             }
+            
         }
     }
     
@@ -1406,113 +1363,13 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
     
 }
 
-+ (void)setupOutstandingClasses {
-    for (NSString* className in entitiesThatNeedRefactoring) {
-        Class class = NSClassFromString(className);
-        if (!class) {
-            class = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
-        }
-        [class setupClass];
-    }
-    entitiesThatNeedRefactoring = nil;
-}
-
-+ (void)inspectClass:(Class)class accumulateDefinitions:(NSMutableDictionary*)classDef accumulateRelationships:(NSMutableArray*)relationships accumulateProperties:(NSMutableDictionary*)combinedProperties {
-    
-    /* this class needs to be tested by the data layer to see if it needs to make any changes */
-    unsigned int outCount;
-    objc_property_t *properties = class_copyPropertyList(class, &outCount);
-    
-    for (int i = 0; i < outCount; i++) {
-        
-        objc_property_t property = properties[i];
-        
-        NSString* name = [NSString stringWithUTF8String:property_getName(property)];
-        int propertyType = [class getEntityPropertyType:name];
-        if (propertyType != SRK_PROPERTY_TYPE_UNDEFINED) {
-            
-            /* now get the actual storage type of the property */
-            int storageType = [class getStorageType:propertyType];
-            NSNumber* dataType = [NSNumber numberWithInt:storageType];
-            
-            if (storageType == SRK_COLUMN_TYPE_ENTITYCOLLECTION) {
-                
-                SRKRelationship* r = [class relationshipForProperty:name];
-                if (r) {
-                    
-                    /* this is a one to many, no need to create a field because it's hooked up to "Id" */
-                    
-                    /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-many relationship */
-                    r.sourceClass = class;
-                    r.sourceProperty = name;
-                    r.entityPropertyName = name;
-                    [relationships addObject:r];
-                    
-                    [classDef setObject:dataType forKey:name];
-                    
-                }
-                
-            }
-            
-            if(storageType == SRK_COLUMN_TYPE_ENTITYCLASS) {
-                
-                NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
-                if ([attributes rangeOfString:@","].location != NSNotFound) {
-                    attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
-                }
-                
-                if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
-                    attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
-                }
-                
-                const char* typeEncoding = [attributes UTF8String];
-                
-                NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-                Class testClass = NSClassFromString(className);
-                if (!testClass) {
-                    testClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
-                }
-                if ([testClass isSubclassOfClass:[SRKEntity class]]) {
-                    
-                    /* ok this is a property based on a entity class linked to the db layer */
-                    [classDef setObject:dataType forKey:[NSString stringWithFormat:@"%@", name]];
-                    
-                    /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-one relationship */
-                    SRKRelationship* r = [SRKRelationship new];
-                    r.sourceClass = self.class;
-                    r.targetClass = NSClassFromString(className);
-                    if (!r.targetClass) {
-                        r.targetClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
-                    }
-                    r.sourceProperty = [NSString stringWithFormat:@"%@", name];
-                    r.targetProperty = SRK_DEFAULT_PRIMARY_KEY_NAME;
-                    r.entityPropertyName = [NSString stringWithString:name];
-                    r.relationshipType = SRK_RELATE_ONETOONE;
-                    
-                    [relationships addObject:r];
-                    
-                }
-                
-            }
-            
-            [combinedProperties setObject:@(propertyType) forKey:name];
-            [classDef setObject:dataType forKey:name];
-            
-        }
-        
-    }
-    
-    free(properties);
-    
-}
-
-+ (void)setupClass {
++(void)initialize {
     
     /* this method gets called when a class is registered in the system */
     /* use this method to register this class with the data layer */
     
-    if (!refactoredEntities) {
-        refactoredEntities = [[NSMutableDictionary alloc] init];
+    if (!inspectedEntities) {
+        inspectedEntities = [[NSMutableDictionary alloc] init];
     }
     
     /* now check to see if this entity needs to be refactored */
@@ -1536,61 +1393,33 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         }
     }
     
-    /* call open to ensure there is a database opened for the storage database of this class */
-    [SharkORM openDatabaseNamed:[SharkORM databaseNameForClass:[self class]]];
-    
-    if (![strClassName isEqualToString:@"SRKObject"] && ![strClassName isEqualToString:@"SRKSyncObject2"] && ![strClassName isEqualToString:@"SRKStringObject"] && ![strClassName isEqualToString:@"SRKEntity"]) {
+    if (![strClassName isEqualToString:@"SRKObject"] && ![strClassName isEqualToString:@"SRKStringObject"] && ![strClassName isEqualToString:@"SRKEntity"]) {
         
-        if ([refactoredEntities objectForKey:strClassName] == nil) {
+        if ([inspectedEntities objectForKey:strClassName] == nil) {
             
-            [refactoredEntities setObject:[NSNull null] forKey:strClassName];
+            [inspectedEntities setObject:[NSNull null] forKey:strClassName];
             
             /* get this class's join relationship data and store this */
             SRKRelationship* jr = [[self class] joinRelationshipForEntityClass];
             if (jr) {
-                
                 jr.sourceClass = c;
                 jr.sourceProperty = [NSString stringWithFormat:@"%@", jr.sourceProperty];
                 jr.targetProperty = SRK_DEFAULT_PRIMARY_KEY_NAME;
-                [SharkORM addEntityRelationship:jr inDatabase:[SharkORM databaseNameForClass:[self class]]];
+                [SharkSchemaManager.shared relationshipAdd:jr];
             }
             
-            /* build an array of classes that we need to introspect */
-            
-            NSMutableDictionary* classDef = [NSMutableDictionary new];
-            NSMutableDictionary* combinedProperties = [NSMutableDictionary new];
-            NSMutableArray* relationships = [NSMutableArray new];
-            
-            NSMutableArray* classes = [NSMutableArray new];
-            [classes addObject:c];
-            Class startClass = [self class];
-            while ([[startClass superclass] isSubclassOfClass:[SRKEntity class]] && (![[[startClass superclass] description] isEqualToString:@"SRKEntity"] && ![[[startClass superclass] description] isEqualToString:@"SRKObject"] && ![[[startClass superclass] description] isEqualToString:@"SRKStringObject"] && ![[[startClass superclass] description] isEqualToString:@"SRKSyncObject2"])) {
-                [classes addObject:[startClass superclass]];
-                startClass = [startClass superclass];
-                if ([[startClass.superclass description] isEqualToString:@"SRKEntity"] || [[startClass.superclass description] isEqualToString:@"SRKObject"] | [[startClass.superclass description] isEqualToString:@"SRKStringObject"] || [[startClass.superclass description] isEqualToString:@"SRKSyncObject2"]) {
-                    break;
-                }
-            }
-            
-            for (Class class in classes) {
-                [self inspectClass:class accumulateDefinitions:classDef accumulateRelationships:relationships accumulateProperties:combinedProperties];
-            }
-            
-            /* if this class is a subclass/inherits, then merge back the properties */
-            if (classes.count > 1) {
-                NSMutableDictionary* cachedProperties = [cachedPropertyListForAllClasses objectForKey:strClassName];
-                for (NSString* key in combinedProperties.allKeys) {
-                    if (![cachedProperties objectForKey:key]) {
-                        [cachedProperties setObject:[combinedProperties objectForKey:key] forKey:key];
-                    }
-                }
+            /* loop the heirarchy building the schema */
+            Class classPointer = [self class];
+            while ([classPointer isSubclassOfClass:[SRKEntity class]] && !([[classPointer description] isEqualToString:@"SRKEntity"] || [[classPointer description] isEqualToString:@"SRKObject"] || [[classPointer description] isEqualToString:@"SRKStringObject"])) {
+                [classPointer inspectAndPopulateSchema:strClassName];
+                classPointer = [classPointer superclass];
             }
             
             /* hookup all the getters and setters for this class and point them at the statics */
             
-            for (NSString* k in classDef.allKeys) {
+            for (NSString* k in [SharkSchemaManager.shared schemaPropertiesForEntity:strClassName]) {
                 
-                int type = [c getEntityPropertyType:k];
+                NSInteger type = [c getEntityPropertyTypeFor:strClassName property:k];
                 
                 if (type == SRK_PROPERTY_TYPE_ENTITYOBJECT) {
                     
@@ -1666,59 +1495,17 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
                     
                 }
                 
+                // now call the database layer to refactor if required
+                [SharkSchemaManager.shared refactorWithDatabase:[self storageDatabaseForClass] entity:[self description]];
+                
             }
             
-            Class c = [self class];
-            NSString* dbName = [SharkORM databaseNameForClass:c];
-            
-            [SharkORM refactorTableFromEntityDefinition:classDef forTable:strClassName inDatabase:dbName primaryKeyAsString:[self getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING ? YES : NO];
-            
-            /* call the entity scripts method, before the remove missing call */
-            [self entityAtRevision:[SharkORM getEntityRevision:strClassName inDatabase:[SharkORM databaseNameForClass:[self class]]]];
-            
-            [SharkORM removeMissingFieldsFromEntityDefinition:classDef forTable:strClassName inDatabase:[SharkORM databaseNameForClass:[self class]]];
-            
-            /* now register all of the relationships & create all of the default indexes that have been building up */
-            for (SRKRelationship* r in relationships) {
-                [SharkORM addEntityRelationship:r inDatabase:[SharkORM databaseNameForClass:[self class]]];
-            }
-            
-            /* ask the class for it's indexes so we can clear them up as well */
-            SRKIndexDefinition* idxDef = [[self class] indexDefinitionForEntity];
-            if (idxDef) {
-                if ([self.class uniquePropertiesForClass]) {
-                    NSArray* uniqueProperties = [self.class uniquePropertiesForClass];
-                    if (uniqueProperties.count == 1) {
-                        [idxDef addIndexForProperty:[uniqueProperties objectAtIndex:0] propertyOrder:[[uniqueProperties objectAtIndex:0] isKindOfClass:[NSString class]] ? SRKIndexSortOrderNoCase : SRKIndexSortOrderAscending];
-                    } else if (uniqueProperties.count > 1) {
-                        [idxDef addIndexForProperty:[uniqueProperties objectAtIndex:0] propertyOrder:[[uniqueProperties objectAtIndex:0] isKindOfClass:[NSString class]] ? SRKIndexSortOrderNoCase : SRKIndexSortOrderAscending secondaryProperty:[uniqueProperties objectAtIndex:1] secondaryOrder:[[uniqueProperties objectAtIndex:1] isKindOfClass:[NSString class]] ? SRKIndexSortOrderNoCase : SRKIndexSortOrderAscending];
-                    }
-                }
-                [idxDef generateIndexesForTable:strClassName inDatabase:[SharkORM databaseNameForClass:[self class]]];
-            }
-            
-            /* now create any FTS virtual tables that might be required */
-            NSArray* ftsPropertyList = [[self class] FTSParametersForEntity];
-            if (ftsPropertyList) {
-                [SharkORM prepareFTSTableForClass:[self class] withPropertyList:ftsPropertyList];
-            } else {
-                /* check to see if there is a table, and drop it because FTS is turned off */
-                [SharkORM executeSQL:[NSString stringWithFormat:@"DROP TABLE fts_%@;",[[self class] description]] inDatabase:nil];
-                FTSRegistry* reg = [FTSRegistry registryForTable:[[self class] description]];
-                if (reg) {
-                    [reg remove];
-                }
-            }
             
         }
         
     }
     
-}
-
-+(void)initialize {
     
-    [self setupClass];
     
 }
 
@@ -1759,9 +1546,6 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
 - (id)init {
     
     /* before anything, check that this object has been setup, because the orm schema might have been reset */
-    if (!refactoredEntities) {
-        [self.class setupOutstandingClasses];
-    }
     
     self = [super init];
     if (self) {
@@ -1779,7 +1563,7 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         
         /* now we fill in the field data with NSNull values until they get set by the data layer */
         @synchronized(self.fieldData) {
-            for (NSString* key in [SharkORM fieldsForTable:entityName]) {
+            for (NSString* key in [SharkSchemaManager.shared schemaPropertiesForEntity:entityName]) {
                 [self.fieldData setObject:[NSNull null] forKey:key];
             }
         }
@@ -1799,19 +1583,14 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         self.registeredEventBlocks = [NSMutableArray new];
         
         /* now loop through any entity relationships there might be for this table */
-        for (SRKRelationship* r in [SharkORM entityRelationships]) {
+        for (SRKRelationship* r in [SharkSchemaManager.shared relationshipsWithEntity:entityName]) {
             
-            if ([[r.sourceClass description] isEqualToString:entityName]) {
-                
-                /* this linking is for this table, bung a lazyloader into the property */
-                
-                SRKLazyLoader* ll = [[SRKLazyLoader alloc] init];
-                ll.relationship = r;
-                ll.parentEntity = self;
-                
-                [self.embeddedEntities setObject:ll forKey:r.sourceProperty];
-                
-            }
+            /* this linking is for this table, bung a lazyloader into the property */
+            SRKLazyLoader* ll = [[SRKLazyLoader alloc] init];
+            ll.relationship = r;
+            ll.parentEntity = self;
+            
+            [self.embeddedEntities setObject:ll forKey:r.sourceProperty];
             
         }
         
@@ -2026,9 +1805,9 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
 }
 
 
-- (NSArray*)fieldNames {
+- (NSArray<NSString*>*)fieldNames {
     
-    return [SharkORM fieldsForTable:[self.class description]];
+    return [SharkSchemaManager.shared schemaPropertiesForEntity:[self.class description]];
     
 }
 
@@ -2105,20 +1884,14 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
 - (void)reloadRelationships {
     
     /* now loop through any entity relationships there might be for this table */
-    for (SRKRelationship* r in [SharkORM entityRelationships]) {
+    for (SRKRelationship* r in [SharkSchemaManager.shared relationshipsWithEntity:[self.class description]]) {
         
-        if ([[r.sourceClass description] isEqualToString:[self.class description]]) {
-            
-            SRKLazyLoader* ll = [SRKLazyLoader new];
-            ll.relationship = r;
-            ll.parentEntity = self;
-            
-            if (r.entityPropertyName) {
-                [self.embeddedEntities setObject:ll forKey:r.entityPropertyName];
-            } else {
-                
-            }
-            
+        SRKLazyLoader* ll = [SRKLazyLoader new];
+        ll.relationship = r;
+        ll.parentEntity = self;
+        
+        if (r.entityPropertyName) {
+            [self.embeddedEntities setObject:ll forKey:r.entityPropertyName];
         }
         
     }
@@ -2173,28 +1946,29 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
     
     // relationships
     NSMutableArray* matchingRelationships = [NSMutableArray new];
-    for (SRKRelationship* r in [SharkORM entityRelationships]) {
-        if ([[r.sourceClass description] isEqualToString:[self.class description]]) {
-            NSMutableDictionary* d = [NSMutableDictionary new];
-            [d setObject:r.entityPropertyName forKey:@"property"];
-            [d setObject:[r.targetClass description] forKey:@"target"];
-            
-            NSObject* thisOb = [self.embeddedEntities objectForKey:r.sourceProperty];
-            if (thisOb) {
-                if ([thisOb isKindOfClass:[SRKLazyLoader class]]) {
-                    [d setObject:@"unloaded" forKey:@"status"];
-                } else {
-                    [d setObject:@"loaded" forKey:@"status"];
-                }
-            }
-            else {
-                /* no lazy or value set for this property */
+    for (SRKRelationship* r in [SharkSchemaManager.shared relationshipsWithEntity:[self.class description]]) {
+        
+        NSMutableDictionary* d = [NSMutableDictionary new];
+        [d setObject:r.entityPropertyName forKey:@"property"];
+        [d setObject:[r.targetClass description] forKey:@"target"];
+        
+        NSObject* thisOb = [self.embeddedEntities objectForKey:r.sourceProperty];
+        if (thisOb) {
+            if ([thisOb isKindOfClass:[SRKLazyLoader class]]) {
                 [d setObject:@"unloaded" forKey:@"status"];
+            } else {
+                [d setObject:@"loaded" forKey:@"status"];
             }
-            
-            [matchingRelationships addObject:d];
         }
+        else {
+            /* no lazy or value set for this property */
+            [d setObject:@"unloaded" forKey:@"status"];
+        }
+        
+        [matchingRelationships addObject:d];
+        
     }
+    
     [info setObject:matchingRelationships forKey:@"relationships"];
     
     // joined data
@@ -2417,7 +2191,7 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
             
             /* check to see if this entity used a string based primary key */
             id currentId = [self Id];
-            if (!currentId && [self.class getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING) {
+            if (!currentId && [SharkSchemaManager.shared schemaPrimaryKeyTypeWithEntity:[self.class description]] == SRK_PROPERTY_TYPE_STRING) {
                 self.Id = (id)[SRKUtilities generateGUID];
             }
             
@@ -2431,26 +2205,22 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
                 }
             }
             
-            for (SRKRelationship* r in [SharkORM entityRelationships]) {
-                if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
-                    
-                    /* this is a link field that needs to be updated */
-                    NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
-                    if(e && [e isKindOfClass:[SRKEntity class]]) {
-                        [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKEntity*)e).Id];
-                        // if the new .Id value is NULL or .sterilized = TRUE then we need to remove this value.
-                        if (((SRKEntity*)e).sterilised || ((SRKEntity*)e).Id == nil) {
-                            [self.embeddedEntities removeObjectForKey:r.entityPropertyName];
-                        }
+            for (SRKRelationship* r in [SharkSchemaManager.shared relationshipsWithEntity:[self.class description] type:SRK_RELATE_ONETOONE]) {
+                /* this is a link field that needs to be updated */
+                NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
+                if(e && [e isKindOfClass:[SRKEntity class]]) {
+                    [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKEntity*)e).Id];
+                    // if the new .Id value is NULL or .sterilized = TRUE then we need to remove this value.
+                    if (((SRKEntity*)e).sterilised || ((SRKEntity*)e).Id == nil) {
+                        [self.embeddedEntities removeObjectForKey:r.entityPropertyName];
                     }
-                    
                 }
             }
             
             /* now we need to populate any fields that are based on primatives with their default values */
             for (NSString* f in self.fieldNames) {
                 
-                int type = [self.class getEntityPropertyType:f];
+                NSInteger type = [SharkSchemaManager.shared schemaPropertyTypeWithEntity:[self.class description] property:f];
                 if ([self.class isTypeAPrimitive:type] && ![self getField:f]) {
                     [self setFieldRaw:f value:@(0)];
                 }
@@ -2503,7 +2273,7 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         
         /* check to see if this entity used a string based primary key */
         id currentId = [self Id];
-        if (!currentId && [self.class getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING) {
+        if (!currentId && [SharkSchemaManager.shared schemaPrimaryKeyTypeWithEntity:[self.class description]] == SRK_PROPERTY_TYPE_STRING) {
             self.Id = (id)[SRKUtilities generateGUID];
         }
         
@@ -2521,19 +2291,15 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
                 }
             }
             
-            for (SRKRelationship* r in [SharkORM entityRelationships]) {
-                if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
-                    
-                    /* this is a link field that needs to be updated */
-                    NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
-                    if(e && [e isKindOfClass:[SRKEntity class]]) {
-                        [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKEntity*)e).Id];
-                        // if the new .Id value is NULL or .sterilized = TRUE then we need to remove this value.
-                        if (((SRKEntity*)e).sterilised || ((SRKEntity*)e).Id == nil) {
-                            [self.embeddedEntities removeObjectForKey:r.entityPropertyName];
-                        }
+            for (SRKRelationship* r in [SharkSchemaManager.shared relationshipsWithEntity:[self.class description] type:SRK_RELATE_ONETOONE]) {
+                /* this is a link field that needs to be updated */
+                NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
+                if(e && [e isKindOfClass:[SRKEntity class]]) {
+                    [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKEntity*)e).Id];
+                    // if the new .Id value is NULL or .sterilized = TRUE then we need to remove this value.
+                    if (((SRKEntity*)e).sterilised || ((SRKEntity*)e).Id == nil) {
+                        [self.embeddedEntities removeObjectForKey:r.entityPropertyName];
                     }
-                    
                 }
             }
             

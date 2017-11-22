@@ -164,6 +164,9 @@ class SyncRequest {
                                 for fieldName: String in targetObject!.fieldNames() as! [String] {
                                     if (fieldName == property) {
                                         targetObject!.setField(property, value: decryptedValue as! NSObject)
+                                        if targetObject?.getRecordGroup() == nil {
+                                            targetObject?.setRecordVisibilityGroup(groupName)
+                                        }
                                         if targetObject!.__commitRaw(withObjectChainNoSync: nil) {
                                             decryptedValue = nil
                                         }

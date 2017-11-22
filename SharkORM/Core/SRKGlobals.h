@@ -46,15 +46,6 @@
 // locks
 - (id)writeLockObject;
 
-// schema
-- (NSMutableDictionary*)tableSchemas;
-- (NSMutableDictionary*)primaryKeys;
-- (NSMutableDictionary*)primaryTypes;
-
-// relationships
-- (NSMutableArray*)systemEntityRelationships;
-- (NSArray*)systemEntityRelationshipsReadOnly;
-
 // global event callbacks
 - (void)setInsertCallback:(SRKGlobalEventCallback)callback;
 - (void)setUpdateCallback:(SRKGlobalEventCallback)callback;

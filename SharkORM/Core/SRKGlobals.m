@@ -29,7 +29,6 @@
 @property void** handles;
 @property (strong) NSMutableDictionary*     databaseHandleIndex;
 @property (strong) SRKSettings*             sharkORMSettings;
-@property (strong) NSMutableArray*          sharkSystemEntityRelationships;
 @property (strong) NSMutableDictionary*     sharkTableSchemas;
 @property (strong) NSMutableDictionary*     sharkPrimaryKeys;
 @property (strong) NSMutableDictionary*     sharkPrimaryTypes;
@@ -64,10 +63,6 @@
         
         if (!_databaseHandleIndex) {
             _databaseHandleIndex = [NSMutableDictionary new];
-        }
-        
-        if (!_sharkSystemEntityRelationships) {
-            _sharkSystemEntityRelationships = [[NSMutableArray alloc] init];
         }
         
         /* now cache the schemas for fast joins and efficient queries */
@@ -112,6 +107,7 @@
     }
     
     return nil;
+    
 }
 
 - (void*)handleForIndex:(int)index {
@@ -185,18 +181,6 @@
 - (NSMutableDictionary*)primaryTypes {
     @synchronized (_sharkPrimaryTypes) {
         return _sharkPrimaryTypes;
-    }
-}
-
-- (NSMutableArray*)systemEntityRelationships {
-    @synchronized (_sharkSystemEntityRelationships) {
-        return _sharkSystemEntityRelationships;
-    }
-}
-
-- (NSArray*)systemEntityRelationshipsReadOnly {
-    @synchronized (_sharkSystemEntityRelationships) {
-        return [NSArray arrayWithArray:_sharkSystemEntityRelationships];
     }
 }
 

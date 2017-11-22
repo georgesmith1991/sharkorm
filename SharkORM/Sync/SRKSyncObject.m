@@ -27,6 +27,7 @@
 #import "SRKEntity+Private.h"
 #import "SRKEntityChain.h"
 #import "SRKSyncRegisteredClass.h"
+#import <SharkORM/SharkORM-Swift.h>
 
 typedef enum : NSUInteger {
     SharkSyncOperationCreate = 1,     // a new object has been created
@@ -157,19 +158,17 @@ typedef enum : NSUInteger {
             }
         }
         
-        for (SRKRelationship* r in [SharkORM entityRelationships]) {
-            if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == 1) {
-                
-                /* this is a link field that needs to be updated */
-                
-                SRKSyncObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
-                if(e && [e isKindOfClass:[SRKSyncObject class]]) {
-                    if ([updatedEmbeddedObjects containsObject:e]) {
-                        [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKSyncObject*)e).Id];
-                    }
+        for (SRKRelationship* r in [SharkSchemaManager.shared relationshipsWithEntity:[self.class description] type:1]) {
+            
+            /* this is a link field that needs to be updated */
+            
+            SRKSyncObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
+            if(e && [e isKindOfClass:[SRKSyncObject class]]) {
+                if ([updatedEmbeddedObjects containsObject:e]) {
+                    [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKSyncObject*)e).Id];
                 }
-                
             }
+            
         }
         
         // now ensure that all values are written for this new record
