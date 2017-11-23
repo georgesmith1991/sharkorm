@@ -365,7 +365,21 @@ static int obCount=0;
             if (![c relationshipForProperty:[NSString stringWithUTF8String:name]]) {
                 [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSArray\"" entityPropertyType:SRK_PROPERTY_TYPE_ARRAY];
             } else {
+                
                 [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSArray\"" entityPropertyType:SRK_PROPERTY_TYPE_ENTITYOBJECTARRAY];
+                
+                SRKRelationship* r = [c relationshipForProperty:propName];
+                if (r) {
+                    
+                    /* this is a one to many, no need to create a field because it's hooked up to "Id" */
+                    
+                    /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-many relationship */
+                    r.sourceClass = c;
+                    r.sourceProperty = propName;
+                    r.entityPropertyName = propName;
+                    [SharkSchemaManager.shared relationshipAdd:r];
+                    
+                }
             }
             
             [self updateEntity:entity property:propName encoding:typeEncoding matches:@"@\"NSDictionary\"" entityPropertyType:SRK_PROPERTY_TYPE_DICTIONARY];
@@ -397,7 +411,28 @@ static int obCount=0;
                 testClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
             }
             if ([testClass isSubclassOfClass:[SRKEntity class]]) {
+                
                 [SharkSchemaManager.shared schemaSetWithEntity:entity property:propName type:SRK_PROPERTY_TYPE_ENTITYOBJECT];
+                
+                // now register a relationship for this object
+                
+                /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-one relationship */
+                SRKRelationship* r = [SRKRelationship new];
+                r.sourceClass = NSClassFromString(entity);
+                if (!r.sourceClass) {
+                    r.sourceClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:entity]);
+                }
+                r.targetClass = NSClassFromString(className);
+                if (!r.targetClass) {
+                    r.targetClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
+                }
+                r.sourceProperty = [NSString stringWithFormat:@"%@", propName];
+                r.targetProperty = SRK_DEFAULT_PRIMARY_KEY_NAME;
+                r.entityPropertyName = [NSString stringWithString:propName];
+                r.relationshipType = SRK_RELATE_ONETOONE;
+                
+                [SharkSchemaManager.shared relationshipAdd:r];
+                
             }
             
         }
