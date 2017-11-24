@@ -1,0 +1,12 @@
+framework module SharkORM {
+    umbrella header "SharkORM.h"
+    
+    export *
+    module * { export * }
+    
+    explicit module Private {
+        header "SharkSync+Private.h"
+    }
+    
+}
+

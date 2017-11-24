@@ -695,7 +695,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
 }
 
-+(int)primaryKeyType:(NSString*)tableName {
++(NSInteger)primaryKeyType:(NSString*)tableName {
     
     return [SharkSchemaManager.shared schemaPrimaryKeyTypeWithEntity:tableName];
     
@@ -709,7 +709,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     @autoreleasepool {
         
-        int         priKeyType = [SharkORM primaryKeyType:[entity.class description]];
+        NSInteger   priKeyType = [SharkORM primaryKeyType:[entity.class description]];
         
         NSString*   className = [entity.class description];
         NSString*   databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
@@ -782,7 +782,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                         case SQLITE_DONE:
                         {
                             keepTrying = NO;
-                            if (priKeyType == SQLITE_INTEGER) {
+                            if (priKeyType == SRK_PROPERTY_TYPE_NUMBER) {
                                 if (!entity.exists) {
                                     [entity setField:SRK_DEFAULT_PRIMARY_KEY_NAME value:@(sqlite3_last_insert_rowid(databaseHandle))];
                                 }
@@ -889,7 +889,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 }
                 
                 if ([entity.class FTSParametersForEntity] != nil) {
-                    if (priKeyType == SQLITE_INTEGER) {
+                    if (priKeyType == SRK_PROPERTY_TYPE_NUMBER) {
                         [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO fts_%@(docid, %@) SELECT Id, %@ FROM %@ WHERE Id = %@", [[entity class] description],propertiesList,propertiesList, [[entity class] description], [entity getField:SRK_DEFAULT_PRIMARY_KEY_NAME]] inDatabase:nil];
                     } else {
                         [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO fts_%@(docid, %@) SELECT Id, %@ FROM %@ WHERE Id = '%@'", [[entity class] description],propertiesList,propertiesList, [[entity class] description], [entity getField:SRK_DEFAULT_PRIMARY_KEY_NAME]] inDatabase:nil];

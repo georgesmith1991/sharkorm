@@ -22,25 +22,29 @@
 
 /* Begin PBXBuildFile section */
 		3A1C0D281FA07B300014CBC3 /* SRKSyncOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D091FA07B2E0014CBC3 /* SRKSyncOptions.m */; };
-		3A1C0D291FA07B300014CBC3 /* SRKDeferredChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */; };
+		3A1C0D291FA07B300014CBC3 /* SRKDeferredChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0A1FA07B2E0014CBC3 /* SRKDeferredChange.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A1C0D2B1FA07B300014CBC3 /* SharkSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D0C1FA07B2F0014CBC3 /* SharkSync.m */; };
-		3A1C0D2D1FA07B300014CBC3 /* SRKSharkSyncAccountSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0E1FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.h */; };
-		3A1C0D2E1FA07B300014CBC3 /* SRKSyncOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0F1FA07B2F0014CBC3 /* SRKSyncOptions.h */; };
-		3A1C0D2F1FA07B300014CBC3 /* SRKSyncRegisteredClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D101FA07B2F0014CBC3 /* SRKSyncRegisteredClass.h */; };
+		3A1C0D2D1FA07B300014CBC3 /* SRKSharkSyncAccountSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0E1FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A1C0D2E1FA07B300014CBC3 /* SRKSyncOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0F1FA07B2F0014CBC3 /* SRKSyncOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A1C0D2F1FA07B300014CBC3 /* SRKSyncRegisteredClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D101FA07B2F0014CBC3 /* SRKSyncRegisteredClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A1C0D301FA07B300014CBC3 /* SRKSyncRegisteredClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D111FA07B2F0014CBC3 /* SRKSyncRegisteredClass.m */; };
 		3A1C0D311FA07B300014CBC3 /* SRKSharkSyncAccountSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D121FA07B2F0014CBC3 /* SRKSharkSyncAccountSettings.m */; };
 		3A1C0D321FA07B300014CBC3 /* SRKDeferredChange.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D131FA07B2F0014CBC3 /* SRKDeferredChange.m */; };
 		3A1C0D331FA07B300014CBC3 /* SRKSyncAuthObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D141FA07B2F0014CBC3 /* SRKSyncAuthObject.m */; };
 		3A1C0D381FA07B300014CBC3 /* SRKSyncNodesList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D1B1FA07B2F0014CBC3 /* SRKSyncNodesList.m */; };
-		3A1C0D3B1FA07B300014CBC3 /* SRKSyncNodesList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D1E1FA07B2F0014CBC3 /* SRKSyncNodesList.h */; };
-		3A1C0D3D1FA07B300014CBC3 /* SRKSyncAuthObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D201FA07B2F0014CBC3 /* SRKSyncAuthObject.h */; };
-		3A1C0D3E1FA07B300014CBC3 /* SharkSync+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */; };
+		3A1C0D3B1FA07B300014CBC3 /* SRKSyncNodesList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D1E1FA07B2F0014CBC3 /* SRKSyncNodesList.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A1C0D3D1FA07B300014CBC3 /* SRKSyncAuthObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D201FA07B2F0014CBC3 /* SRKSyncAuthObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A1C0D3E1FA07B300014CBC3 /* SharkSync+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D211FA07B2F0014CBC3 /* SharkSync+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A1C0D411FA07B300014CBC3 /* SRKSyncObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D241FA07B2F0014CBC3 /* SRKSyncObject.m */; };
 		3A1C0D431FA07B300014CBC3 /* SRKDefunctObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0D261FA07B300014CBC3 /* SRKDefunctObject.m */; };
 		3A33ED171FC2E0B800D8CAA5 /* SharkSchemaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A33ED161FC2E0B800D8CAA5 /* SharkSchemaManager.swift */; };
 		3A44877E1D1E857B00BD9CB5 /* OtherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A44877D1D1E857B00BD9CB5 /* OtherTests.m */; };
 		3A5319D61FB308F6007F49A8 /* SharkSyncChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5319D51FB308F6007F49A8 /* SharkSyncChange.swift */; };
 		3A5319D81FB30A92007F49A8 /* SharkSyncGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5319D71FB30A92007F49A8 /* SharkSyncGroup.swift */; };
+		3A6C79071FC72D2D00762749 /* SRKContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413991CF632120085166C /* SRKContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A6C79081FC72D2D00762749 /* SRKTransaction+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E08DF4391E02BAD9003884DE /* SRKTransaction+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A6C79091FC72D2D00762749 /* SRKTransactionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E02AC1B71E07EF2500E47406 /* SRKTransactionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A6C790A1FC738C400762749 /* SRKDefunctObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1C0D0B1FA07B2E0014CBC3 /* SRKDefunctObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A707A741FA129D700ECE39F /* SyncComms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A707A731FA129D700ECE39F /* SyncComms.swift */; };
 		3A91BC021FBCAD6200D1E032 /* SyncRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5319D31FB307BB007F49A8 /* SyncRequest.swift */; };
 		3AC1CA3C1FB05A7C000A8F36 /* SyncNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC1CA3B1FB05A7C000A8F36 /* SyncNetwork.swift */; };
@@ -48,22 +52,22 @@
 		3AE95AFB1FBCA12C0043FB59 /* SRKEncryptedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEA1FBCA12C0043FB59 /* SRKEncryptedObject.m */; };
 		3AE95AFC1FBCA12C0043FB59 /* SRKEntityChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEB1FBCA12C0043FB59 /* SRKEntityChain.m */; };
 		3AE95AFD1FBCA12C0043FB59 /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEC1FBCA12C0043FB59 /* SRKRawResults.m */; };
-		3AE95AFE1FBCA12C0043FB59 /* SRKCommitOptions+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AED1FBCA12C0043FB59 /* SRKCommitOptions+Private.h */; };
+		3AE95AFE1FBCA12C0043FB59 /* SRKCommitOptions+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AED1FBCA12C0043FB59 /* SRKCommitOptions+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AE95AFF1FBCA12C0043FB59 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEE1FBCA12C0043FB59 /* SRKCommitOptions.m */; };
 		3AE95B001FBCA12C0043FB59 /* SRKResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AEF1FBCA12C0043FB59 /* SRKResultSet.m */; };
 		3AE95B011FBCA12C0043FB59 /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AF01FBCA12C0043FB59 /* SRKStringObject.m */; };
-		3AE95B021FBCA12C0043FB59 /* SRKResultSet+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF11FBCA12C0043FB59 /* SRKResultSet+Private.h */; };
-		3AE95B031FBCA12C0043FB59 /* SRKUnsupportedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF21FBCA12C0043FB59 /* SRKUnsupportedObject.h */; };
+		3AE95B021FBCA12C0043FB59 /* SRKResultSet+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF11FBCA12C0043FB59 /* SRKResultSet+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3AE95B031FBCA12C0043FB59 /* SRKUnsupportedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF21FBCA12C0043FB59 /* SRKUnsupportedObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AE95B041FBCA12C0043FB59 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AF31FBCA12C0043FB59 /* SRKAES256Extension.m */; };
-		3AE95B051FBCA12C0043FB59 /* SRKEntity+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF41FBCA12C0043FB59 /* SRKEntity+Private.h */; };
-		3AE95B061FBCA12C0043FB59 /* SRKEntityChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF51FBCA12C0043FB59 /* SRKEntityChain.h */; };
-		3AE95B071FBCA12C0043FB59 /* SRKEncryptedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF61FBCA12C0043FB59 /* SRKEncryptedObject.h */; };
+		3AE95B051FBCA12C0043FB59 /* SRKEntity+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF41FBCA12C0043FB59 /* SRKEntity+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3AE95B061FBCA12C0043FB59 /* SRKEntityChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF51FBCA12C0043FB59 /* SRKEntityChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3AE95B071FBCA12C0043FB59 /* SRKEncryptedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AF61FBCA12C0043FB59 /* SRKEncryptedObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AE95B081FBCA12C0043FB59 /* SRKUnsupportedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AF71FBCA12C0043FB59 /* SRKUnsupportedObject.m */; };
 		3AE95B091FBCA12C0043FB59 /* SRKEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AF81FBCA12C0043FB59 /* SRKEntity.m */; };
 		3AE95B0A1FBCA12C0043FB59 /* SRKObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95AF91FBCA12C0043FB59 /* SRKObject.m */; };
-		3AE95B0B1FBCA12C0043FB59 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AFA1FBCA12C0043FB59 /* SRKAES256Extension.h */; };
+		3AE95B0B1FBCA12C0043FB59 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE95AFA1FBCA12C0043FB59 /* SRKAES256Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AE95B0D1FBCA1410043FB59 /* SyncInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE95B0C1FBCA1410043FB59 /* SyncInterface.swift */; };
-		3AE95B1E1FBCAA620043FB59 /* SRKSyncObject+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5319D21FB30756007F49A8 /* SRKSyncObject+Private.h */; };
+		3AE95B1E1FBCAA620043FB59 /* SRKSyncObject+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5319D21FB30756007F49A8 /* SRKSyncObject+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6915F03E1F2A51EF008B9842 /* SRKIndexProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 6915F03C1F2A51EF008B9842 /* SRKIndexProperty.m */; };
 		6915F0411F2A54DF008B9842 /* SRKCompoundIndex+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6915F03F1F2A54DF008B9842 /* SRKCompoundIndex+Private.h */; };
 		6915F0421F2A54DF008B9842 /* SRKCompoundIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 6915F0401F2A54DF008B9842 /* SRKCompoundIndex.m */; };
@@ -77,7 +81,6 @@
 		E00320631CFB8F0B00240C44 /* Persistence.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320621CFB8F0B00240C44 /* Persistence.m */; };
 		E012E0361D0AEDDE00B6F741 /* TODO.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E012E0351D0AEDDD00B6F741 /* TODO.rtf */; };
 		E0215CA81D195C2700876ABC /* Subclass.m in Sources */ = {isa = PBXBuildFile; fileRef = E0215CA71D195C2700876ABC /* Subclass.m */; };
-		E02AC1B91E07EF2500E47406 /* SRKTransactionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E02AC1B71E07EF2500E47406 /* SRKTransactionInfo.h */; };
 		E02AC1BA1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
@@ -85,14 +88,14 @@
 		E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A0CDFA1E016B1500942AE5 /* Transactions.m */; };
-		E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F241DB75E82003F608B /* SRKGlobals.h */; };
+		E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F241DB75E82003F608B /* SRKGlobals.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0A83F271DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
 		E0A83F2B1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
 		E0A83F2C1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
 		E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
 		E0A83F321DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
-		E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F2F1DB7B5C9003F608B /* sqlite3.h */; };
-		E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F301DB7B5C9003F608B /* sqlite3ext.h */; };
+		E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F2F1DB7B5C9003F608B /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F301DB7B5C9003F608B /* sqlite3ext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0C450C61D10865A003FA21D /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = E0C450C51D10865A003FA21D /* Query.m */; };
 		E0E3ACD21D11B80A006803F7 /* Relationship.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E3ACD11D11B80A006803F7 /* Relationship.m */; };
 		E0E3ACD51D11B8B5006803F7 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E3ACD41D11B8B5006803F7 /* Location.m */; };
@@ -101,11 +104,11 @@
 		E0F413521CF6312A0085166C /* SharkORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0F413471CF6312A0085166C /* SharkORM.framework */; };
 		E0F413571CF6312A0085166C /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413561CF6312A0085166C /* BaseTestCase.m */; };
 		E0F413A41CF632120085166C /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
-		E0F413A61CF632120085166C /* SRKEventBlockHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413641CF632120085166C /* SRKEventBlockHolder.h */; };
+		E0F413A61CF632120085166C /* SRKEventBlockHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413641CF632120085166C /* SRKEventBlockHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413A71CF632120085166C /* SRKEventBlockHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413651CF632120085166C /* SRKEventBlockHolder.m */; };
-		E0F413A91CF632120085166C /* SRKEventHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413661CF632120085166C /* SRKEventHandler+Private.h */; };
+		E0F413A91CF632120085166C /* SRKEventHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413661CF632120085166C /* SRKEventHandler+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413AA1CF632120085166C /* SRKEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413671CF632120085166C /* SRKEventHandler.m */; };
-		E0F413AC1CF632120085166C /* SRKEventRegistryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413681CF632120085166C /* SRKEventRegistryObject.h */; };
+		E0F413AC1CF632120085166C /* SRKEventRegistryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413681CF632120085166C /* SRKEventRegistryObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413AD1CF632120085166C /* SRKEventRegistryObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413691CF632120085166C /* SRKEventRegistryObject.m */; };
 		E0F413AF1CF632120085166C /* FTSRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4136B1CF632120085166C /* FTSRegistry.h */; };
 		E0F413B01CF632120085166C /* FTSRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4136C1CF632120085166C /* FTSRegistry.m */; };
@@ -114,32 +117,31 @@
 		E0F413B51CF632120085166C /* SRKIndexDefinition+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413711CF632120085166C /* SRKIndexDefinition+Private.h */; };
 		E0F413B61CF632120085166C /* SRKIndexDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413721CF632120085166C /* SRKIndexDefinition.m */; };
 		E0F413C41CF632120085166C /* SRKFTSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4137D1CF632120085166C /* SRKFTSQuery.m */; };
-		E0F413C61CF632120085166C /* SRKJoinObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4137E1CF632120085166C /* SRKJoinObject.h */; };
+		E0F413C61CF632120085166C /* SRKJoinObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4137E1CF632120085166C /* SRKJoinObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413C71CF632120085166C /* SRKJoinObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4137F1CF632120085166C /* SRKJoinObject.m */; };
-		E0F413C91CF632120085166C /* SRKQuery+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413801CF632120085166C /* SRKQuery+Private.h */; };
+		E0F413C91CF632120085166C /* SRKQuery+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413801CF632120085166C /* SRKQuery+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413CA1CF632120085166C /* SRKQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413811CF632120085166C /* SRKQuery.m */; };
-		E0F413CC1CF632120085166C /* SRKQueryAsyncHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413821CF632120085166C /* SRKQueryAsyncHandler+Private.h */; };
+		E0F413CC1CF632120085166C /* SRKQueryAsyncHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413821CF632120085166C /* SRKQueryAsyncHandler+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413CD1CF632120085166C /* SRKQueryAsyncHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413831CF632120085166C /* SRKQueryAsyncHandler.m */; };
 		E0F413CF1CF632120085166C /* SRKQueryProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413841CF632120085166C /* SRKQueryProfile.m */; };
-		E0F413D11CF632120085166C /* SRKRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413861CF632120085166C /* SRKRegistry.h */; };
+		E0F413D11CF632120085166C /* SRKRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413861CF632120085166C /* SRKRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413D21CF632120085166C /* SRKRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413871CF632120085166C /* SRKRegistry.m */; };
-		E0F413D41CF632120085166C /* SRKRegistryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413881CF632120085166C /* SRKRegistryEntry.h */; };
+		E0F413D41CF632120085166C /* SRKRegistryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413881CF632120085166C /* SRKRegistryEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413D51CF632120085166C /* SRKRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413891CF632120085166C /* SRKRegistryEntry.m */; };
-		E0F413D71CF632120085166C /* SharkORM+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138A1CF632120085166C /* SharkORM+Private.h */; };
+		E0F413D71CF632120085166C /* SharkORM+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138A1CF632120085166C /* SharkORM+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413D81CF632120085166C /* SharkORM.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138B1CF632120085166C /* SharkORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413D91CF632120085166C /* SharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4138C1CF632120085166C /* SharkORM.m */; };
-		E0F413DB1CF632120085166C /* SRKDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138D1CF632120085166C /* SRKDefinitions.h */; };
+		E0F413DB1CF632120085166C /* SRKDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138D1CF632120085166C /* SRKDefinitions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413DC1CF632120085166C /* SRKError.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4138E1CF632120085166C /* SRKError.m */; };
-		E0F413DE1CF632120085166C /* SRKLazyLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138F1CF632120085166C /* SRKLazyLoader.h */; };
+		E0F413DE1CF632120085166C /* SRKLazyLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4138F1CF632120085166C /* SRKLazyLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413DF1CF632120085166C /* SRKLazyLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413901CF632120085166C /* SRKLazyLoader.m */; };
-		E0F413E11CF632120085166C /* SRKRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413911CF632120085166C /* SRKRelationship.h */; };
+		E0F413E11CF632120085166C /* SRKRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413911CF632120085166C /* SRKRelationship.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413E21CF632120085166C /* SRKRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413921CF632120085166C /* SRKRelationship.m */; };
 		E0F413E41CF632120085166C /* SRKSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413931CF632120085166C /* SRKSettings.m */; };
-		E0F413E61CF632120085166C /* SRKSQLiteHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413941CF632120085166C /* SRKSQLiteHandle.h */; };
+		E0F413E61CF632120085166C /* SRKSQLiteHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413941CF632120085166C /* SRKSQLiteHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413E71CF632120085166C /* SRKSQLiteHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413951CF632120085166C /* SRKSQLiteHandle.m */; };
-		E0F413E91CF632120085166C /* SRKUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413961CF632120085166C /* SRKUtilities.h */; };
+		E0F413E91CF632120085166C /* SRKUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413961CF632120085166C /* SRKUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0F413EA1CF632120085166C /* SRKUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413971CF632120085166C /* SRKUtilities.m */; };
-		E0F413EC1CF632120085166C /* SRKContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413991CF632120085166C /* SRKContext.h */; };
 		E0F413ED1CF632120085166C /* SRKContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139A1CF632120085166C /* SRKContext.m */; };
 		E0F413EF1CF632120085166C /* SRKTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139B1CF632120085166C /* SRKTransaction.m */; };
 /* End PBXBuildFile section */
@@ -179,6 +181,7 @@
 		3A5319D31FB307BB007F49A8 /* SyncRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRequest.swift; sourceTree = "<group>"; };
 		3A5319D51FB308F6007F49A8 /* SharkSyncChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharkSyncChange.swift; sourceTree = "<group>"; };
 		3A5319D71FB30A92007F49A8 /* SharkSyncGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharkSyncGroup.swift; sourceTree = "<group>"; };
+		3A6C79051FC72A6600762749 /* SharkORM.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; name = SharkORM.modulemap; path = SharkORM/SharkORM.modulemap; sourceTree = "<group>"; };
 		3A707A731FA129D700ECE39F /* SyncComms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncComms.swift; sourceTree = "<group>"; };
 		3A847F851FB38AC200F8884C /* BaseSwiftTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSwiftTest.swift; sourceTree = "<group>"; };
 		3AC1CA3B1FB05A7C000A8F36 /* SyncNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncNetwork.swift; sourceTree = "<group>"; };
@@ -533,6 +536,7 @@
 			isa = PBXGroup;
 			children = (
 				E012E0351D0AEDDD00B6F741 /* TODO.rtf */,
+				3A6C79051FC72A6600762749 /* SharkORM.modulemap */,
 				E0F413491CF6312A0085166C /* SharkORM */,
 				E0F413551CF6312A0085166C /* SharkORMTests */,
 				E0F413481CF6312A0085166C /* Products */,
@@ -721,7 +725,6 @@
 			files = (
 				3AE95B051FBCA12C0043FB59 /* SRKEntity+Private.h in Headers */,
 				3A1C0D291FA07B300014CBC3 /* SRKDeferredChange.h in Headers */,
-				E02AC1B91E07EF2500E47406 /* SRKTransactionInfo.h in Headers */,
 				3A1C0D2F1FA07B300014CBC3 /* SRKSyncRegisteredClass.h in Headers */,
 				3A1C0D2E1FA07B300014CBC3 /* SRKSyncOptions.h in Headers */,
 				E0F413D81CF632120085166C /* SharkORM.h in Headers */,
@@ -729,6 +732,7 @@
 				E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */,
 				E0F413B21CF632120085166C /* SRKFuzzyStore.h in Headers */,
 				E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */,
+				3A6C79071FC72D2D00762749 /* SRKContext.h in Headers */,
 				E0F413D71CF632120085166C /* SharkORM+Private.h in Headers */,
 				E0F413AC1CF632120085166C /* SRKEventRegistryObject.h in Headers */,
 				E0F413DE1CF632120085166C /* SRKLazyLoader.h in Headers */,
@@ -739,7 +743,9 @@
 				3AE95B071FBCA12C0043FB59 /* SRKEncryptedObject.h in Headers */,
 				E0F413CC1CF632120085166C /* SRKQueryAsyncHandler+Private.h in Headers */,
 				3A1C0D3E1FA07B300014CBC3 /* SharkSync+Private.h in Headers */,
+				3A6C79091FC72D2D00762749 /* SRKTransactionInfo.h in Headers */,
 				3A1C0D3D1FA07B300014CBC3 /* SRKSyncAuthObject.h in Headers */,
+				3A6C79081FC72D2D00762749 /* SRKTransaction+Private.h in Headers */,
 				3A1C0D3B1FA07B300014CBC3 /* SRKSyncNodesList.h in Headers */,
 				3A1C0D2D1FA07B300014CBC3 /* SRKSharkSyncAccountSettings.h in Headers */,
 				E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */,
@@ -751,10 +757,10 @@
 				E0F413C61CF632120085166C /* SRKJoinObject.h in Headers */,
 				3AE95AFE1FBCA12C0043FB59 /* SRKCommitOptions+Private.h in Headers */,
 				3AE95B0B1FBCA12C0043FB59 /* SRKAES256Extension.h in Headers */,
-				E0F413EC1CF632120085166C /* SRKContext.h in Headers */,
 				E0F413C91CF632120085166C /* SRKQuery+Private.h in Headers */,
 				E0F413A61CF632120085166C /* SRKEventBlockHolder.h in Headers */,
 				E0F413B51CF632120085166C /* SRKIndexDefinition+Private.h in Headers */,
+				3A6C790A1FC738C400762749 /* SRKDefunctObject.h in Headers */,
 				E0F413A91CF632120085166C /* SRKEventHandler+Private.h in Headers */,
 				3AE95B021FBCA12C0043FB59 /* SRKResultSet+Private.h in Headers */,
 				3AE95B1E1FBCAA620043FB59 /* SRKSyncObject+Private.h in Headers */,
@@ -768,9 +774,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E0F4135B1CF6312A0085166C /* Build configuration list for PBXNativeTarget "SharkORM" */;
 			buildPhases = (
+				E0F413441CF6312A0085166C /* Headers */,
 				E0F413421CF6312A0085166C /* Sources */,
 				E0F413431CF6312A0085166C /* Frameworks */,
-				E0F413441CF6312A0085166C /* Headers */,
 				E0F413451CF6312A0085166C /* Resources */,
 			);
 			buildRules = (
@@ -877,7 +883,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Merge Script\n\n# 1\n# Set bash script to exit immediately if any commands fail.\nset -e\n\n# 2\n# Setup some constants for use later on.\nFRAMEWORK_NAME=\"SharkORM\"\n\n# 3\n# If remnants from a previous build exist, delete them.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi\n\n# 4\n# Build the framework for device and for simulator (using\n# all needed architectures).\nxcodebuild -target \"${FRAMEWORK_NAME}\" -configuration Release -arch arm64 -arch armv7 -arch armv7s only_active_arch=no defines_module=yes -sdk \"iphoneos\"\nxcodebuild -target \"${FRAMEWORK_NAME}\" -configuration Release -arch x86_64 -arch i386 only_active_arch=no defines_module=yes -sdk \"iphonesimulator\"\n\n# 5\n# Remove .framework file if exists on Desktop from previous run.\nif [ -d \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\" ]; then\nrm -rf \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\nfi\n\n# 6\n# Copy the device version of framework to Desktop.\ncp -r \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\n\n# 7\n# Replace the framework executable within the framework with\n# a new version created by merging the device and simulator\n# frameworks' executables with lipo.\nlipo -create -output \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\"\n\n# 8\n# Copy the Swift module mappings for the simulator into the\n# framework.  The device mappings already exist from step 6.\ncp -r \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule/\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule\"\n\n# 9\n# Delete the most recent build.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi";
+			shellScript = "# Merge Script\n\n# 1\n# Set bash script to exit immediately if any commands fail.\nset -e\n\n# 2\n# Setup some constants for use later on.\nFRAMEWORK_NAME=\"SharkORM\"\n\n# 3\n# If remnants from a previous build exist, delete them.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi\n\n# 4\n# Build the framework for device and for simulator (using\n# all needed architectures).\nxcodebuild -target \"${FRAMEWORK_NAME}\" BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -configuration Release -arch arm64 -arch armv7 -arch armv7s only_active_arch=no defines_module=yes -sdk \"iphoneos\"\nxcodebuild -target \"${FRAMEWORK_NAME}\" BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -configuration Release -arch x86_64 -arch i386 only_active_arch=no defines_module=yes -sdk \"iphonesimulator\"\n\n# 5\n# Remove .framework file if exists on Desktop from previous run.\nif [ -d \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\" ]; then\nrm -rf \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\nfi\n\n# 6\n# Copy the device version of framework to Desktop.\ncp -r \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\n\n# 7\n# Replace the framework executable within the framework with\n# a new version created by merging the device and simulator\n# frameworks' executables with lipo.\nlipo -create -output \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\"\n\n# 8\n# Copy the Swift module mappings for the simulator into the\n# framework.  The device mappings already exist from step 6.\ncp -r \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule/\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule\"\n\n# 9\n# Delete the most recent build.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1129,11 +1135,11 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "$(SRCROOT)/SharkORM/SharkORM.modulemap";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SharkORM/PrivateModule";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
@@ -1159,10 +1165,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "$(SRCROOT)/SharkORM/SharkORM.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SharkORM/PrivateModule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

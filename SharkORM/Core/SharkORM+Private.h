@@ -51,7 +51,7 @@
 +(int)getSchemaRevisioninDatabase:(NSString*)dbName;
 +(void)setEntityRevision:(int)revision forEntity:(NSString*)entity inDatabase:(NSString*)dbName;
 +(int)getEntityRevision:(NSString*)entity inDatabase:(NSString*)dbName;
-+(int)primaryKeyType:(NSString*)tableName;
++(NSInteger)primaryKeyType:(NSString*)tableName;
 +(void)cacheSchemaForDatabase:(NSString*)database withHandle:(sqlite3*)db;
 +(void)cachePrmaryKeyForTable:(NSString*)table inDatabase:(NSString*)dbName;
 +(void)cachePrmaryKeyTypeTable:(NSString*)table inDatabase:(NSString*)dbName;

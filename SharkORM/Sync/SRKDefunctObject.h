@@ -22,7 +22,7 @@
 
 
 
-#import "../Core/SharkORM.h"
+#import "SharkORM.h"
 
 @interface SRKDefunctObject : SRKObject
 

@@ -21,7 +21,7 @@
 //    SOFTWARE.
 
 
-#import "../Core/SharkORM.h"
+#import "SharkORM.h"
 
 @interface SRKDeferredChange : SRKObject
 

@@ -25,10 +25,10 @@
 #ifndef SharkSync_Private_h
 #define SharkSync_Private_h
 
-#import "../Core/SharkORM.h"
+#import "SharkORM.h"
 #import "SRKSyncObject+Private.h"
-#import "../Core/PersistableObjects/SRKEntity+Private.h"
-#import "../Core/SharkORM+Private.h"
+#import "SRKEntity+Private.h"
+#import "SharkORM+Private.h"
 #import "SharkSync+Private.h"
 #import "SRKDefunctObject.h"
 #import "SRKDeferredChange.h"

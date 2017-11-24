@@ -27,7 +27,7 @@
  */
 
 import Foundation
-import SharkPrivate
+import SharkORM.Private
 
 public enum SharkSchemaChangeOperation {
     case Undefined
@@ -208,10 +208,10 @@ public struct SharkSchemaStruct {
         
         let schema = schemas[entity]
         if schema != nil {
-            return schema!.fields[schema!.pk] ?? Int(SRK_PROPERTY_TYPE_INT)
+            return schema!.fields[schema!.pk] ?? Int(SRK_PROPERTY_TYPE_NUMBER)
         }
         
-        return Int(SRK_PROPERTY_TYPE_INT) // SQLITE_INTEGER
+        return Int(SRK_PROPERTY_TYPE_NUMBER) // SQLITE_INTEGER
         
     }
     
@@ -603,7 +603,7 @@ public struct SharkSchemaStruct {
             
             // completely new table, we can do this in a single operation
             var sql = "CREATE TABLE IF NOT EXISTS \(entity) (Id "
-            if schemaPrimaryKeyType(entity: entity) == SRK_PROPERTY_TYPE_INT {
+            if schemaPrimaryKeyType(entity: entity) == SRK_PROPERTY_TYPE_NUMBER {
                 sql += "INTEGER PRIMARY KEY AUTOINCREMENT);"
             } else {
                 sql += "TEXT PRIMARY KEY);"
@@ -653,7 +653,7 @@ public struct SharkSchemaStruct {
                 
                 // create the new table
                 var sql = "CREATE TABLE IF NOT EXISTS \(entity) (Id "
-                if schemaPrimaryKeyType(entity: entity) == SRK_PROPERTY_TYPE_INT {
+                if schemaPrimaryKeyType(entity: entity) == SRK_PROPERTY_TYPE_NUMBER {
                     sql += "INTEGER PRIMARY KEY AUTOINCREMENT);"
                 } else {
                     sql += "TEXT PRIMARY KEY);"
