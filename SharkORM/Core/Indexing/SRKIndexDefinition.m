@@ -27,6 +27,7 @@
 #import "SRKIndexDefinition+Private.h"
 #import "SharkORM+Private.h"
 #import "SRKCompoundIndex+Private.h"
+#import <SharkORM/SharkORM-Swift.h>
 
 @implementation SRKIndexDefinition
 
@@ -78,12 +79,16 @@
 
 }
 
-- (void)generateIndexesForTable:(NSString*)tableName inDatabase:(NSString *)dbName{
+- (void)generateIndexesForTable:(NSString*)tableName forEntity:(NSString*)entity {
+    
 	for (SRKCompoundIndex* index in _components) {
         NSString* execSql = [NSString stringWithFormat:@"CREATE INDEX %@ ON %@ %@;", [index getIndexName], tableName, [index getPropertyString]];
         execSql = [execSql stringByReplacingOccurrencesOfString:@"*tablename" withString:tableName];
-        [SharkORM executeSQL:execSql inDatabase:dbName];
+        
+        [SharkSchemaManager.shared schemaAddIndexDefinitionWithEntity:entity name:[[index getIndexName] stringByReplacingOccurrencesOfString:@"*tablename" withString:tableName] definition:execSql];
+        
 	}
+        
 }
 
 @end

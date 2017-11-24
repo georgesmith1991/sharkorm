@@ -27,7 +27,7 @@
 	NSMutableArray* _components;
 }
 
-- (void)generateIndexesForTable:(NSString*)tableName inDatabase:(NSString*)dbName;
+- (void)generateIndexesForTable:(NSString*)tableName forEntity:(NSString*)entity;
 
 @end
 

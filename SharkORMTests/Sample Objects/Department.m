@@ -14,7 +14,6 @@
 + (SRKIndexDefinition *)indexDefinitionForEntity {
     SRKIndexDefinition* idx = [SRKIndexDefinition new];
     [idx addIndexForProperty:@"name" propertyOrder:SRKIndexSortOrderAscending];
-    [idx addIndexForProperty:@"age" propertyOrder:SRKIndexSortOrderAscending];
     return idx;
 }
 

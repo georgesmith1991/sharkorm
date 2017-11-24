@@ -1530,11 +1530,34 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
                     
                 }
                 
-                // now call the database layer to refactor if required
-                [SharkSchemaManager.shared refactorWithDatabase:[self storageDatabaseForClass] entity:[self description]];
+            }
+            
+            // generate all the indexes for the entity
+            /* ask the class for it's indexes so we can clear them up as well */
+            SRKIndexDefinition* idxDef = [[self class] indexDefinitionForEntity];
+            if (idxDef) {
+                
+                if ([self.class uniquePropertiesForClass]) {
+                    NSArray* uniqueProperties = [self.class uniquePropertiesForClass];
+                    if (uniqueProperties.count == 1) {
+                        [idxDef addIndexForProperty:[uniqueProperties objectAtIndex:0] propertyOrder:[[uniqueProperties objectAtIndex:0] isKindOfClass:[NSString class]] ? SRKIndexSortOrderNoCase : SRKIndexSortOrderAscending];
+                    } else if (uniqueProperties.count > 1) {
+                        [idxDef addIndexForProperty:[uniqueProperties objectAtIndex:0] propertyOrder:[[uniqueProperties objectAtIndex:0] isKindOfClass:[NSString class]] ? SRKIndexSortOrderNoCase : SRKIndexSortOrderAscending secondaryProperty:[uniqueProperties objectAtIndex:1] secondaryOrder:[[uniqueProperties objectAtIndex:1] isKindOfClass:[NSString class]] ? SRKIndexSortOrderNoCase : SRKIndexSortOrderAscending];
+                    }
+                }
+                
+                [idxDef generateIndexesForTable:strClassName forEntity:strClassName];
                 
             }
             
+            // generate the default Primary key index
+            // now create an index for the primary key
+            NSString* execSql = [NSString stringWithFormat:@"CREATE INDEX idx_%@_prikey ON %@ (Id);", strClassName, strClassName];
+            [SharkSchemaManager.shared schemaAddIndexDefinitionWithEntity:strClassName name:[NSString stringWithFormat:@"idx_%@_prikey", strClassName] definition:execSql];
+            
+            
+            // now call the database layer to refactor if required
+            [SharkSchemaManager.shared refactorWithDatabase:[self storageDatabaseForClass] entity:[self description]];
             
         }
         

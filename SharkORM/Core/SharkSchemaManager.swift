@@ -159,6 +159,7 @@ public struct SharkSchemaStruct {
     }
     
     @objc public func schemaSet(entity: String, pk: String) {
+        
         var schema = schemas[entity]
         if schema == nil {
             schema = SharkSchemaStruct()
@@ -167,6 +168,9 @@ public struct SharkSchemaStruct {
         }
         schema?.pk = pk
         schemas[entity] = schema
+        
+        // register the index for this 
+        
     }
     
     @objc public func schemaSet(entity: String, database: String?) {
