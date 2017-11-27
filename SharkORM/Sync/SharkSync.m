@@ -263,6 +263,12 @@ typedef enum : NSUInteger {
 
 + (void)queueObject:(SRKSyncObject *)object withChanges:(NSMutableDictionary*)changes withOperation:(SharkSyncOperation)operation inHashedGroup:(NSString*)group {
     
+    if (![[[SRKSyncRegisteredClass query] whereWithFormat:@"className = %@", [object.class description]] count]) {
+        SRKSyncRegisteredClass* c = [SRKSyncRegisteredClass new];
+        c.className = [object.class description];
+        [c commit];
+    }
+    
     if (operation == SharkSyncOperationCreate || operation == SharkSyncOperationSet) {
         
         /* we have an object so look at the modified fields and queue the properties that have been set */

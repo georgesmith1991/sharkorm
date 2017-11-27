@@ -51,12 +51,6 @@ typedef enum : NSUInteger {
     
     [super initialize];
     
-    if (![[[SRKSyncRegisteredClass query] whereWithFormat:@"className = %@", [self description]] count]) {
-        SRKSyncRegisteredClass* c = [SRKSyncRegisteredClass new];
-        c.className = [self description];
-        [c commit];
-    }
-    
 }
 
 - (BOOL)commit {
