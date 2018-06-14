@@ -657,6 +657,10 @@ typedef void(^SRKCommitOptionsBlock)();
 
 @end
 
+@interface SRKObject ()
+- (NSDictionary*)fieldData;
+@end
+
 /**
  * Every SRKObject class or instance contains an SRKEventHandler, which the developer can use to monitor activity within the object or class of objects.
 
